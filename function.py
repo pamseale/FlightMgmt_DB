@@ -1,44 +1,149 @@
 import sqlite3
 import uuid
-from sql_queries import *
+conn = sqlite3.connect('flight_management_database.db')
 
 # Generate a GUID
 guid = str(uuid.uuid4())
 
+def check_in_range(value, low, high):
+    result = False
+    if low <= value <= high:
+        result = True
+    return result
 
-# database functions
+def request_and_validate(low, high):
+    while True:
+        choice = input("Select a menu choice or 'E' to exit.")
+        if choice == "E":
+            exit()
+        else:
+            try:
+                int(choice)
+            except ValueError:
+                print("invalid choice, please enter an integer")
+            else:
+                if low <= int(choice) <= high:
+                    break
+                else:
+                    print("selection out of range, please choose a number between", low, " and", high)
+    return choice
 
 
-# represents the current item/element
+def print_start_menu():
+    print("Would you like to view, edit or update:")
+    print("1. Flight information")
+    print("2. Pilot or staff records")
+    print("3. Airport information")
 
-table_list = ['airport', 'airport_status', 'staff', 'plane']
+def print_flight_menu():
+    print("Would you like to:")
+    print("1. View flight data")
+    print("2. Amend flight data")
+    print("3. Remove a flight from the database")
+
+def print_staff_menu():
+    print("Would you like to:")
+    print("1. View pilot or staff data")
+    print("2. Amend pilot or staff data")
+    print("3. Remove a staff record from the database")
+
+def print_airport_menu():
+    print("Would you like to:")
+    print("1. View airport data")
+    print("2. Amend airport data")
+    print("3. Remove an airport from the database")
+
+def display_flights():
+    display_all_from_table(conn, 'flight_view')
+    execute(conn, "SELECT * FROM flight_view;")
+
+def amend_flights():
+    print("amend")
+def remove_flights():
+    print("remove")
+
+def start_menu():
+    print_start_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def flight_menu():
+    print_flight_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def staff_menu():
+    print_flight_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def airport_menu():
+    print_flight_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def execute_start_menu_choice(choice):
+    if choice == "1":
+        choice = flight_menu()
+        execute_flight_menu_choice(choice)
+    if choice == "2":
+        choice = staff_menu()
+        execute_staff_menu_choice(choice)
+    if choice == "3":
+        choice = airport_menu()
+        execute_airport_menu_choice(choice)
+    if choice == 'E':
+        exit()
+
+def execute_flight_menu_choice(choice):
+    if choice == "1": #view
+        display_flights()
+        #choice = view_flight_data_menu()
+        #execute_view_flight_data_menu_choice(choice)
+    if choice == "2": # amend
+        amend_flights()
+        #choice = view_pilot_data_menu()
+        #execute_view_pilot_data_menu_choice(choice)
+    if choice == "3": # remove
+        remove_flight()
+        #choice = view_airport_data_menu()
+        #execute_view_airport_data_menu_choice(choice)
+    if choice == 'E':
+        exit()
+
+
+
+
+def welcome():
+    print("_________________________           ____")
+    print("|                         \         \   \__      _____")
+    print("|      WELCOME TO          \_________\   \/_______\___\_____________")
+    print("|     FLIGHT MANAGER       /         < /_/   .....................  `-.")
+    print("|_________________________/            `-----------,----,--------------'")
+    print("                                                 _/____/")
+
+
+def user_validation():
+    pin = 1234
+    while True:
+        response = input("Please enter the PIN or 'E' to exit program.")
+        if response == 1234:
+            print("\nPIN accepted.\n") #menu_1
+            break
+        elif response == "E":
+            print(
+                "\nExiting program.\n")
+        else:
+            print("\nPIN not accepted, please try again.\n")
 
 
 def drop_all_tables(conn):
     for table in table_list:
         drop_table(conn, table)
-
-
-def create_all_tables(conn):
-    # create tables
-    execute(conn, sql_create_staff)
-    execute(conn, sql_create_airport)
-    execute(conn, sql_create_airport_status)
-    execute(conn, sql_create_plane)
-
-def populate_all_tables(conn):
-    # populate tables
-    execute(conn, staff_record_1)
-    execute(conn, staff_record_2)
-    execute(conn, staff_record_3)
-    execute(conn, staff_record_4)
-    execute(conn, airport_record_1)
-    execute(conn, airport_record_2)
-    execute(conn, airport_record_3)
-    execute(conn, airport_status_record_1)
-    execute(conn, airport_status_record_2)
-    execute(conn, airport_status_record_3)
-
 
 def drop_table(conn, table_name):
     cursor = conn.cursor()
