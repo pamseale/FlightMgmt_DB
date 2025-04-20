@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS staff (
     forename VARCHAR(20) NOT NULL,
     role VARCHAR(20),
     license_ID VARCHAR(20),
+    license_status VARCHAR(20),
     PRIMARY KEY (ID)
     );
 
@@ -69,15 +70,15 @@ CREATE TABLE IF NOT EXISTS flight (
     );
 
 
-INSERT INTO staff VALUES ('STID0001', 'Lancaster', 'Timothy', 'pilot', 'AV027691');
-INSERT INTO staff VALUES ('STID0002', 'Aitchison', 'Alastair', 'pilot', 'AV512944');
-INSERT INTO staff VALUES ('STID0003', 'Ogden', 'Nigel', 'cabin crew', NULL);
-INSERT INTO staff VALUES ('STID0004', 'Dubois', 'Marc', 'pilot', 'AV107369');
-INSERT INTO staff VALUES ('STID0005', 'Robert', 'David', 'pilot', 'AV969312');
-INSERT INTO staff VALUES ('STID0006', 'Bonin', 'Pierre-Cedric', 'pilot', 'AV295581');
-INSERT INTO staff VALUES ('STID0007', 'Danilov', 'Andrey', 'pilot', 'AV853011');
-INSERT INTO staff VALUES ('STID0008', 'Piskaryov', 'Igor', 'pilot', 'AV669301');
-INSERT INTO staff VALUES ('STID0009', 'Kudrinsky', 'Yaroslav', 'pilot', 'AV208218');
+INSERT INTO staff VALUES ('STID0001', 'Lancaster', 'Timothy', 'pilot', 'AV027691', 'current');
+INSERT INTO staff VALUES ('STID0002', 'Aitchison', 'Alastair', 'pilot', 'AV512944', 'current');
+INSERT INTO staff VALUES ('STID0003', 'Ogden', 'Nigel', 'cabin crew', NULL, NULL);
+INSERT INTO staff VALUES ('STID0004', 'Dubois', 'Marc', 'pilot', 'AV107369', 'current');
+INSERT INTO staff VALUES ('STID0005', 'Robert', 'David', 'pilot', 'AV969312', 'current');
+INSERT INTO staff VALUES ('STID0006', 'Bonin', 'Pierre-Cedric', 'pilot', 'AV295581', 'current');
+INSERT INTO staff VALUES ('STID0007', 'Danilov', 'Andrey', 'pilot', 'AV853011', 'current');
+INSERT INTO staff VALUES ('STID0008', 'Piskaryov', 'Igor', 'pilot', 'AV669301', 'current');
+INSERT INTO staff VALUES ('STID0009', 'Kudrinsky', 'Yaroslav', 'pilot', 'AV208218', 'current');
 
 INSERT INTO airport VALUES ('BIR', 'Birmingham Airport', 'Birmingham', 'UK', 'Europe', 'open');
 INSERT INTO airport VALUES ('MAL', 'Malaga Airport', 'Malaga', 'Spain', 'Europe', 'open');
@@ -89,9 +90,6 @@ INSERT INTO airport VALUES ('HKG', 'Kai Tak International Airport', 'Kowloon', '
 INSERT INTO airport_status VALUES ('open');
 INSERT INTO airport_status VALUES ('closed');
 INSERT INTO airport_status VALUES ('warning in place');
-
-INSERT INTO license_status VALUES ('AV02769', 'current');
-INSERT INTO license_status VALUES ('AV51294', 'current');
 
 INSERT INTO plane VALUES ('G-BJRT', 'BAC One-Eleven 528FL', 1971, 2, 4, 81);
 INSERT INTO plane VALUES ('F-GZCP', 'Airbus A330-203', 2005, 3, 9, 216);
