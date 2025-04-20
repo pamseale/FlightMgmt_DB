@@ -10,10 +10,10 @@ def welcome():
     print("|_________________________/            `-----------,----,--------------'")
     print("                                                 _/____/")
 
-def amend_flights():
-    print("amend")
-def remove_flights():
-    print("remove")
+#def amend_flights():
+#    print("amend")
+#def remove_flights():
+#    print("remove")
 
 def start_menu():
     print_start_menu()
@@ -28,7 +28,7 @@ def flight_menu():
     return valid_input
 
 def staff_menu():
-    print_flight_menu()
+    print_staff_menu()
     num_options = 3
     valid_input = request_and_validate(1, num_options)
     return valid_input
@@ -84,11 +84,44 @@ def execute_flight_menu_choice(choice):
         #choice = view_flight_data_menu()
         #execute_view_flight_data_menu_choice(choice)
     if choice == "2": # amend
-        amend_flights()
+        print("amend")
         #choice = view_pilot_data_menu()
         #execute_view_pilot_data_menu_choice(choice)
     if choice == "3": # remove
-        remove_flight()
+        print("remove")
+        #choice = view_airport_data_menu()
+        #execute_view_airport_data_menu_choice(choice)
+    if choice == 'E':
+        exit()
+
+def execute_staff_menu_choice(choice):
+    if choice == "1": #view
+        display_staff()
+        #choice = view_flight_data_menu()
+        #execute_view_flight_data_menu_choice(choice)
+    if choice == "2": # amend
+        print("amend")
+        #choice = view_pilot_data_menu()
+        #execute_view_pilot_data_menu_choice(choice)
+    if choice == "3": # remove
+        print("remove")
+        remove_staff()
+        #choice = view_airport_data_menu()
+        #execute_view_airport_data_menu_choice(choice)
+    if choice == 'E':
+        exit()
+
+def execute_airport_menu_choice(choice):
+    if choice == "1": #view
+        display_airports()
+        #choice = view_flight_data_menu()
+        #execute_view_flight_data_menu_choice(choice)
+    if choice == "2": # amend
+        print("amend")
+        #choice = view_pilot_data_menu()
+        #execute_view_pilot_data_menu_choice(choice)
+    if choice == "3": # remove
+        print("remove")
         #choice = view_airport_data_menu()
         #execute_view_airport_data_menu_choice(choice)
     if choice == 'E':

@@ -1,4 +1,99 @@
 
+"""def display_table(conn, table_name):
+    conn = sqlite3.connect('flight_management_database.db')
+    conn.row_factory = dict_factory
+    for row in conn.execute("SELECT ID FROM flight as flight_number"):
+        print(row)
+#
+#     cursor = conn.cursor()
+    query = f"SELECT * FROM {table_name}"
+    res = conn.execute(query)
+    rows = res.fetchall()
+    for row in rows:
+        row.keys()
+        row['ID']
+        print(row['ID'])
+
+def dict_factory(cursor, row):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}
+
+def display_all_from_table(conn, table_name):
+    conn = sqlite3.connect('flight_management_database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    query = f"SELECT * FROM {table_name}"
+    try:
+        cursor.execute(query)
+        rows_all = cursor.fetchall()
+        row_one = cursor.fetchone()
+        col_names = row_one.keys()
+        print(f"\nData from table '{table_name}':")
+        for row in rows_all:
+            print(row)
+            print(col_names['ID'])
+        conn.commit()
+    except sqlite3.Error as e:
+        print("An error occurred:", e)
+    finally:
+        close(conn)
+
+def display_view(conn, view_name):
+    cursor = conn.cursor()
+    query = f"SELECT * FROM {view_name}"
+    cursor.execute(query).fetchall()
+
+#    print(conn.execute("SELECT * FROM flight_view").fetchall())
+#    cursor = conn.cursor()
+    query = f"{view_name}"
+    try:
+        print(conn.execute("SELECT * FROM flight_view").fetchall())
+        conn.commit()
+    except sqlite3.Error as e:
+        print("An error occurred:", e)
+
+def execute(conn, query):
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query)
+        conn.commit()
+    except sqlite3.Error as e:
+        print("An error occurred:", e)
+
+def close(conn):
+    try:
+       conn.close()
+    except sqlite3.Error as e:
+       print("An error occurred:", e)
+
+
+
+
+def drop_table(conn, table_name):
+    cursor = conn.cursor()
+    query = f"DROP TABLE IF EXISTS {table_name}"
+    try:
+      cursor.execute(query)
+      conn.commit()
+    except sqlite3.Error as e:
+        print("An error occurred:", e)
+#    finally:
+    #    close(conn)
+
+def create_table(conn, table_name):
+    cursor = conn.cursor()
+    query = f"CREATE TABLE IF NOT EXISTS {table_name}"
+    try:
+      cursor.execute(query)
+      conn.commit()
+    except sqlite3.Error as e:
+        print("An error occurred:", e)
+#    finally:
+    #    close(conn)"""
+
+
+
+
 """
 
 
