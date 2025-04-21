@@ -48,15 +48,15 @@ def print_sub_menu(table_name):
 def execute_start_menu_choice(choice):
     if choice == "1":
         choice = main_menu('flight')
-        execute_sub_menu_choice(flight_dict)
+        execute_sub_menu_choice(choice, flight_dict)
         return
     if choice == "2":
         choice = main_menu('staff')
-        execute_sub_menu_choice(staff_dict)
+        execute_sub_menu_choice(choice, staff_dict)
         return
     if choice == "3":
         choice = main_menu('airport')
-        execute_sub_menu_choice(airport_dict)
+        execute_sub_menu_choice(choice, airport_dict)
         return
     if choice == 'E':
         exit()
@@ -68,7 +68,7 @@ def execute_flight_menu_choice(choice):
     query_view = 'view_flights'
 
     if choice == "1":
-        display_table(query_view, table_name, column_names)
+        display_table(dict, query_view, table_name, column_names)
         return
     if choice == "2":
         add_record(query_view, table_name, column_names)
@@ -88,7 +88,7 @@ def execute_staff_menu_choice(choice):
     query_view = 'view_staff'
 
     if choice == "1":
-        display_table(query_view, table_name, column_names)
+        display_table(dict, query_view, table_name, column_names)
     if choice == "2":
         add_record(query_view, table_name, column_names)
     if choice == "3":
@@ -114,18 +114,18 @@ def execute_airport_menu_choice(choice):
     if choice == 'E':
         exit()
 
-def execute_sub_menu_choice(choice):
+def execute_sub_menu_choice(choice, dict):
     if choice == "1":
-        display_table(query_view, table_name, column_names)
+        display_table(dict)
         return
     if choice == "2":
-        add_record(query_view, table_name, column_names)
+        add_record(dict)
         return
     if choice == "3":
-        amend_record(query_view, table_name, column_names)
+        amend_record(dict)
         return
     if choice == "4":
-        remove_record(query_view, table_name, column_names)
+        remove_record(dict)
         return
     if choice == 'E':
         exit()

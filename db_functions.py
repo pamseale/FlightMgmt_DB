@@ -12,21 +12,21 @@ flight_dict = {
     "table_name": "flight",
     "col_headers":["No.", "Flight no.", "Plane", "Dep", "Arr", "Pilot", "First Officer", "Relief Captain", "Departure (sch.)", "Arrival (sch.)", "Departure (act.)", "Arrival (act)"],
     "amend_options": ["1. Plane", "2. Departure airport", "3. Arrival airport", "4. Pilot", "5. First Officer", "6. Relief Captain", "7. Scheduled departure date/time", "8. Scheduled arrival date/time", "9. Actual departure date/time", "10. Actual arrival date/time"],
-    "query_view": "view_flights"
+    "query_name": "view_flights"
 }
 
 staff_dict = {
     "table_name": "staff",
     "col_headers":["No.", "Staff ID", "Surname", "Forname", "Role", "License no.", "License status"],
     "amend_options": ["1. Surname", "2. Forename", "3. Role"],
-    "query_view": "view_staff"
+    "query_name": "view_staff"
 }
 
 airport_dict = {
     "table_name": "airport",
     "col_headers":["No.", "Code", "Name", "City", "Country", "Continent", "Status"],
     "amend_options": ["1. Name", "2. Status"],
-    "query_view": "view_airports"
+    "query_name": "view_airports"
 }
 
 
@@ -54,20 +54,20 @@ def load_query(file_path, query_name):
     raise ValueError(f"Query {query_name} not found.")
 
     
-
-def display_table(query_name, table_name, column_names):
-    print(f"\nAll {table_name} information:\n")
+def display_table(dict):
+    #table_name = dict['table_name']
+    print(f"\nAll {dict['table_name']} information:\n")
     # create connection object
     conn = sqlite3.connect('flight_management_database.db')
     cursor = conn.cursor()
     # get SQL query from file and execute
-    query = load_query("view_queries.sql", query_name)
+    query = load_query("view_queries.sql", dict['query_name'])
     cursor.execute(query)
     rows = cursor.fetchall()
     numbered_rows = add_numbering(rows)
-    col_widths = calc_padding(numbered_rows, column_names)
+    col_widths = calc_padding(numbered_rows, dict['col_headers'])
     headers = add_padding(col_widths)
-    print(headers.format(*column_names))
+    print(headers.format(*dict['col_headers']))
     print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
     # allow for NULL value entries
     for row in numbered_rows:
