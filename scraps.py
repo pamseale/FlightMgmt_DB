@@ -1,5 +1,80 @@
+"""
+def amend_record(query_name, table_name, column_names):
+    conn = sqlite3.connect('flight_management_database.db')
+    cursor = conn.cursor()
+    display_table(query_name, table_name, column_names)
+    num_rows = row_count(conn, table_name)
+
+    print("\nWhich record would you like to update?\n")
+    record_no = request_and_validate(1, num_rows)
+
+
+
+    cursor.execute(f"SELECT * from {table_name} ")
+    rows = cursor.fetchall()
+    index = int(record_no) - 1
+    if 0 <= index < len(rows):
+        record_id = rows[index][0]
+    value_to_update = staff_amend_menu()
+    amend_record(value_to_update)
+    #    cursor.execute(f"SELECT * FROM {table_name} LIMIT 1")
+     #   row = cursor.fetchone()
+     #   column_names = [desc[0] for desc in cursor.description]
+     #   if row:
+     #       non_empty_columns = [name for name, value in zip(column_names, row) if value not in (None, "")]
+     #       print("Non-empty fields for this record:")
+     #       for col in non_empty_columns:
+     #           print(col)
+        #cursor.execute(f"DELETE FROM {table_name} WHERE id = ?", (record_id,))
+    conn.commit()
+    print(f"Updated record (ID: {record_id})")
+    else:
+        print(f"Row {record_no} does not exist.")
+    conn.close
+
+
+def amend_staff_record(query_name, table_name, column_names):
+    conn = sqlite3.connect('flight_management_database.db')
+    cursor = conn.cursor()
+    display_table(query_name, table_name, column_names)
+    num_rows = row_count(conn, table_name)
+    print("\nWhich record would you like to update?\n")
+    record_no = request_and_validate(1, num_rows)
+    cursor.execute(f"SELECT * from {table_name} ")
+    rows = cursor.fetchall()
+    index = int(record_no) - 1
+    if 0 <= index < len(rows):
+        record_id = rows[index][0]
+        cursor.execute(f"SELECT * FROM {table_name} WHERE id = ?", (record_id))
+        row = cursor.fetchone()
+        amend_record(, row)
+        conn.commit()
+        print(f"Updated record (ID: {record_id})")
+    else:
+        print(f"Row {record_no} does not exist.")
+    conn.close
+"""
+
+
 """    FOREIGN KEY (first_officer_ID) REFERENCES staff(ID),
     FOREIGN KEY (relief_captain_ID) REFERENCES staff(ID),"""
+"""
+def display_flights():
+    print("\nAll flight information:\n")
+    column_names = ["No.", "Flight no.", "Plane", "Dep", "Arr", "Pilot", "First Officer", "Relief Captain", "Departure (sch.)", "Arrival (sch.)", "Departure (act.)", "Arrival (act)"]
+    display_table('view_flights', column_names)
+
+def display_airports():
+    print("\nAll airport information:\n")
+    column_names = ["No.", "Code", "Name", "City", "Country", "Continent", "Status"]
+    display_table('view_airports', column_names)
+
+def display_staff():
+    print("\nAll staff information:\n")
+    column_names = ["No.", "Staff ID", "Surname", "Forname", "Role", "License no.", "License status"]
+    display_table('view_staff', column_names)
+"""
+
 
 """def print_flight_menu():
     print("Would you like to:")

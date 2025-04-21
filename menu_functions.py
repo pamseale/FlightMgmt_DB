@@ -22,6 +22,12 @@ def main_menu(option):
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
+def staff_amend_menu():
+    print_staff_amend_menu()
+    num_options = 4
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
 def print_start_menu():
     print("Would you like to view, edit or update:")
     print("1. Flight information")
@@ -36,6 +42,8 @@ def print_sub_menu(table_name):
         print(f"3. Remove an {table_name} record from the database")
     else:
         print(f"3. Remove a {table_name} record from the database")
+
+
 
 
 def execute_start_menu_choice(choice):
@@ -65,6 +73,8 @@ def execute_flight_menu_choice(choice):
         return
     if choice == "2":
         print("amend")
+        value_to_update = staff_amend_menu()        
+        #amend_record(query_view, table_name, column_names)
         return
     if choice == "3":
         remove_record(query_view, table_name, column_names)
@@ -82,6 +92,7 @@ def execute_staff_menu_choice(choice):
         display_table(query_view, table_name, column_names)
     if choice == "2":
         print("amend")
+        amend_record(query_view, table_name, column_names)
     if choice == "3":
         remove_record(query_view, table_name, column_names)
     if choice == 'E':
@@ -95,10 +106,24 @@ def execute_airport_menu_choice(choice):
     if choice == "1":
         display_table(query_view, table_name, column_names)
     if choice == "2":
-        print("amend")
+        amend_record(query_view, table_name, column_names)
     if choice == "3":
-        print("remove")
         remove_record(query_view, table_name, column_names)
     if choice == 'E':
         exit()
 
+def execute_staff_amend_menu_choice(choice):
+    table_name = 'staff'
+    query_amend = 'amend_staff'
+
+    if choice == "1":
+        value = 'surname'
+    if choice == "2":
+        value = 'forname'
+    if choice == "3":
+        value = 'role'
+    if choice == "4":
+        value = 'license_status'
+    if choice == 'E':
+        exit()
+    #amend(query_amend, table_name, value)
