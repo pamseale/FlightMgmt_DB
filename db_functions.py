@@ -4,40 +4,55 @@ from menu_functions import *
 from input_validation import *
 from formatting import *
 
-# create sql connection object
-conn = sqlite3.connect('flight_management_database.db')
-
+db_filename = 'flight_management_database.db'
 
 flight_dict = {
     "table_name": "flight",
     "col_headers":["No.", "Flight no.", "Plane", "Dep", "Arr", "Pilot", "First Officer", "Relief Captain", "Departure (sch.)", "Arrival (sch.)", "Departure (act.)", "Arrival (act)"],
-    "amend_options": ["1. Plane", "2. Departure airport", "3. Arrival airport", "4. Pilot", "5. First Officer", "6. Relief Captain", "7. Scheduled departure date/time", "8. Scheduled arrival date/time", "9. Actual departure date/time", "10. Actual arrival date/time"],
+    "amend_options": [  {'display': "1. Plane", 'col': "plane_ID"},
+                        {'display': "2. Departure airport", 'col': "airport_dep_ID"},
+                        {'display': "3. Arrival airport", 'col': "airport_arr_ID"},
+                        {'display': "4. Pilot", 'col': "pilot_ID"},
+                        {'display': "5. First Officer", 'col': "first_officer_ID"},
+                        {'display': "6. Relief Captain", 'col': "relief_captain_ID"},
+                        {'display': "7. Scheduled departure date/time", 'col': "date_dep_scheduled"},
+                        {'display': "8. Scheduled arrival date/time", 'col': "date_arr_scheduled"},
+                        {'display': "9. Actual departure date/time", 'col': "date_dep_actual"},
+                        {'display': "10. Actual arrival date/time", 'col': "date_dep_actual"} ],
     "query_name": "view_flights"
 }
 
 staff_dict = {
     "table_name": "staff",
     "col_headers":["No.", "Staff ID", "Surname", "Forname", "Role", "License no.", "License status"],
-    "amend_options": ["1. Surname", "2. Forename", "3. Role"],
+    "amend_options": [  {'display': "1. Surname", 'col': "surname"},
+                        {'display': "2. Forename", 'col': "forename"},
+                        {'display': "3. Role", 'col': "role"} ],
     "query_name": "view_staff"
 }
 
 airport_dict = {
     "table_name": "airport",
     "col_headers":["No.", "Code", "Name", "City", "Country", "Continent", "Status"],
-    "amend_options": ["1. Name", "2. Status"],
+    "amend_options": [  {'display': "1. Name", 'col': "name"},
+                        {'display': "2. Status", 'col': "status"} ],
     "query_name": "view_airports"
 }
 
-
 #import database
 def import_db():
-   with open('db_setup.sql', 'r') as sql_file:
-      sql_script = sql_file.read()
-   cursor = conn.cursor()
-   cursor.executescript(sql_script)
-   conn.commit()
-   conn.close()
+    # read .sql file
+    with open('db_setup.sql', 'r') as sql_file:
+        sql_script = sql_file.read()
+    # create db connection
+    conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+    # execute .sql file script
+    cursor.executescript(sql_script)
+    # commit chnages
+    conn.commit()
+    # close db connection
+    conn.close()
 
 def load_query(file_path, query_name):
     # read query file
@@ -46,19 +61,19 @@ def load_query(file_path, query_name):
     # split file in sections at each comment(--), effectively the query title
     sections = content.split('-- ')
     for section in sections:
-        if not section.strip():
-            continue
+#        if not section.strip():
+#            continue
         if section.startswith(query_name):
             return section[len(query_name):].strip()
     # error message if query not found
     raise ValueError(f"Query {query_name} not found.")
 
-    
+
 def display_table(dict):
     #table_name = dict['table_name']
     print(f"\nAll {dict['table_name']} information:\n")
     # create connection object
-    conn = sqlite3.connect('flight_management_database.db')
+    conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
     # get SQL query from file and execute
     query = load_query("view_queries.sql", dict['query_name'])
@@ -76,6 +91,15 @@ def display_table(dict):
     conn.commit
     conn.close
 
+
+def print_amend_options(dict):
+    print("\nYou have permission to update the following records:\n")
+    options = [opt['display'] for opt in dict['amend_options']]
+    for option in options:
+        print (option)
+    print("\n")
+
+
 def row_count(conn, table_name):
     cursor = conn.cursor()
     num_rows = cursor.execute(f"SELECT COUNT(*) from {table_name}")
@@ -83,121 +107,38 @@ def row_count(conn, table_name):
         result = (row[0])
     return result
 
-def remove_record(query_name, table_name, column_names):
-    conn = sqlite3.connect('flight_management_database.db')
-    cursor = conn.cursor()
-    display_table(query_name, table_name, column_names)
-    num_rows = row_count(conn, table_name)
-    print("\nWhich record would you like to delete?\n")
-    record_no = request_and_validate(1, num_rows)
-    cursor.execute(f"SELECT * from {table_name} ")
-    rows = cursor.fetchall()
-    index = int(record_no) - 1
-    if 0 <= index < len(rows):
-        record_id = rows[index][0]
-        cursor.execute(f"DELETE FROM {table_name} WHERE id = ?", (record_id,))
-        conn.commit()
-        print(f"Deleted record (ID: {record_id})")
-    else:
-        print(f"Row {record_no} does not exist.")
-    conn.close
 
-def print_amend_options(dict):
-    print("\nYou have permission to update the following records:\n")
-    if 'amend_options' in dict:
-        for item in dict['amend_options']:
-            print(item)
-    else:
-        print("not found")
-
-def print_staff_amend_menu():
-    print("\nYou have permission to update the following records:/n")
-    print("1. Surname")
-    print("2. Forename")
-    print("3. Role")
-    print("\n Which value would you like to update?\n")
-
-def print_airport_amend_menu():
-    print("\nYou have permission to update the following records:/n")
-    print("1. Name")
-    print("2. Status")
-    print("\n Which value would you like to update?\n")
-
-def flight_amend_menu():
-    print_amend_options(flight_dict)
-    num_options = 8
-    valid_input = request_and_validate(1, num_options)
-    if valid_input == '1':
-        return "plane_ID"
-    if valid_input == '2':
-        return "airport_dep_ID"
-    if valid_input == '3':
-        return "airport_arr_ID" 
-    if valid_input == '4':
-        return "pilot_ID"
-    if valid_input == '5':
-        return "first_officer_ID"
-    if valid_input == '6':
-        return "relief_captain_ID" 
-    if valid_input == '7':
-        return "date_dep_scheduled"
-    if valid_input == '8':
-        return "date_arr_scheduled"
-    if valid_input == '9':
-        return "date_dep_actual"
-    if valid_input == '10':
-        return "date_arr_actual"
-
-
-def staff_amend_menu():
-    print_staff_amend_menu()
-    num_options = 3
-    valid_input = request_and_validate(1, num_options)
-    if valid_input == '1':
-        return "surname"
-    if valid_input == '2':
-        return "forename"
-    if valid_input == '3':
-        return "role" 
-
-def airport_amend_menu():
-    print_airport_amend_menu()
-    num_options = 2
-    valid_input = request_and_validate(1, num_options)
-    if valid_input == '1':
-        return "name"
-    if valid_input == '2':
-        return "airport_status_ID"
+def get_col_to_update(dict):
+    print_amend_options(dict)
+    num_options = len(dict['amend_options'])
+    valid_input = (request_and_validate(1, num_options))
+    index = int(valid_input) - 1
+    print(index)
+    column_name = dict['amend_options'][index]['col']
+    print(column_name)
+    return column_name
     
+
 def new_value():
     new_value = input("What would you like the new value to be?")
     return new_value
 
-def get_airport_record():
-    id = input("Enter the airport ID in the following format: AAA  ")
-    name = input("Enter the airport name:  ")
-    city = input("Enter the airport's nearest city:  ")
-    country = input("Enter the country in which the airport is located:  ")
-    continent = input("Enter the continent:  ")
-    status = input("Enter the airport's current status (open, closed, warning in place):  ")
-    return id, name, city, country, continent, status
 
-
-def amend_record(query_name, table_name, column_names):
-    conn = sqlite3.connect('flight_management_database.db')
+def update_record(dict):
+    conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
-    display_table(query_name, table_name, column_names)
-    num_rows = row_count(conn, table_name)
+    display_table(dict)
+    num_rows = row_count(conn, dict['table_name'])
     print("\nWhich record would you like to change?\n")
     record_no = request_and_validate(1, num_rows)
-    cursor.execute(f"SELECT * from {table_name} ")
+    cursor.execute(f"SELECT * from {dict['table_name']} ")
     rows = cursor.fetchall()
     index = int(record_no) - 1
     if 0 <= index < len(rows):
         record_id = rows[index][0]
-        value_to_update = str(flight_amend_menu())
+        col_to_update = get_col_to_update(dict)
         updated_value = new_value()
-        sql = f"UPDATE {table_name} SET {value_to_update} = ? WHERE ID = ?"
+        sql = f"UPDATE {dict['table_name']} SET {col_to_update} = ? WHERE ID = ?"
         cursor.execute(sql, (updated_value, record_id))
         conn.commit()
         print(f"Updated record (ID: {record_id})")
@@ -206,13 +147,51 @@ def amend_record(query_name, table_name, column_names):
     conn.close
 
 
-def add_record(query_name, table_name, column_names):
-    conn = sqlite3.connect('flight_management_database.db')
+def get_new_record_values(table):
+    if table == 'flight':
+        return get_new_flight_record()
+    if table == 'staff':
+        return get_new_staff_record()
+    if table == 'airport':
+        return get_new_airport_record()
+
+
+def add_record(dict):
+    conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
-    column_names = ["No.", "Code", "Name", "City", "Country", "Continent", "Status"]
-    args = get_airport_record()
-    sql = "INSERT INTO airport (ID, name, city, country, continent, airport_status_ID) VALUES (?, ?, ?, ?, ?, ?)"
+    cursor.execute(f"SELECT * from {dict['table_name']} LIMIT 1")
+    column_names = [desc[0] for desc in cursor.description]
+    columns_str = ', '.join(column_names)  # joins into one string
+    placeholders = ', '.join(['?'] * len(column_names))  # creates '?, ?, ?, ?'
+    print(column_names)
+    print(len(column_names))
+    args = get_new_record_values(dict['table_name'])
+    print(args)
+    print(len(args))
+    if len(args) != len(column_names):
+        raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
+    sql = f"INSERT INTO {dict['table_name']} ({columns_str}) VALUES ({placeholders})"
+    print(sql)
     cursor.execute(sql, args)
     conn.commit()        
     print(f"Record added ({args[1]})")
+    conn.close
+
+def remove_record(dict):
+    conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+    display_table(dict)
+    num_rows = row_count(conn, dict['table_name'])
+    print("\nWhich record would you like to delete?\n")
+    record_no = request_and_validate(1, num_rows)
+    cursor.execute(f"SELECT * from {dict['table_name']} ")
+    rows = cursor.fetchall()
+    index = int(record_no) - 1
+    if 0 <= index < len(rows):
+        record_id = rows[index][0]
+        cursor.execute(f"DELETE FROM {dict['table_name']} WHERE id = ?", (record_id,))
+        conn.commit()
+        print(f"Deleted record (ID: {record_id})")
+    else:
+        print(f"Row {record_no} does not exist.")
     conn.close
