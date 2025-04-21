@@ -8,9 +8,9 @@ SELECT
     fo.surname AS first_officer, 
     rc.surname AS relief_captain 
 FROM flight as f 
-INNER JOIN staff as p ON p.ID=f.pilot_ID 
-INNER JOIN staff as fo ON fo.ID=f.first_officer_ID 
-INNER JOIN staff as rc ON rc.ID=f.relief_captain_ID;
+LEFT JOIN staff as p ON p.ID=f.pilot_ID 
+LEFT JOIN staff as fo ON fo.ID=f.first_officer_ID 
+LEFT JOIN staff as rc ON rc.ID=f.relief_captain_ID;
 
 -- view_airports
 SELECT 
