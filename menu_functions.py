@@ -1,5 +1,5 @@
 from db_functions import *
-from input_validation_functions import *
+from input_validation import *
 
 def welcome():
     print("_________________________           ____")
@@ -18,7 +18,7 @@ def start_menu():
 
 def main_menu(option):
     print_sub_menu(option)
-    num_options = 3
+    num_options = 4
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
@@ -37,27 +37,26 @@ def print_start_menu():
 def print_sub_menu(table_name):
     print("Would you like to:")
     print(f"1. View {table_name} data")
-    print(f"2. Amend {table_name} data")
+    print(f"2. Add {table_name} data")
+
+    print(f"3. Amend {table_name} data")
     if table_name == 'airport':
-        print(f"3. Remove an {table_name} record from the database")
+        print(f"4. Remove an {table_name} record from the database")
     else:
-        print(f"3. Remove a {table_name} record from the database")
-
-
-
+        print(f"4. Remove a {table_name} record from the database")
 
 def execute_start_menu_choice(choice):
     if choice == "1":
         choice = main_menu('flight')
-        execute_flight_menu_choice(choice)
+        execute_sub_menu_choice(flight_dict)
         return
     if choice == "2":
         choice = main_menu('staff')
-        execute_staff_menu_choice(choice)
+        execute_sub_menu_choice(staff_dict)
         return
     if choice == "3":
         choice = main_menu('airport')
-        execute_airport_menu_choice(choice)
+        execute_sub_menu_choice(airport_dict)
         return
     if choice == 'E':
         exit()
@@ -72,13 +71,13 @@ def execute_flight_menu_choice(choice):
         display_table(query_view, table_name, column_names)
         return
     if choice == "2":
-        print("amend")
-        value_to_update = staff_amend_menu()        
-        #amend_record(query_view, table_name, column_names)
+        add_record(query_view, table_name, column_names)
         return
     if choice == "3":
+        amend_record(query_view, table_name, column_names)
+        return
+    if choice == "4":
         remove_record(query_view, table_name, column_names)
-        print("remove")
         return
     if choice == 'E':
         exit()
@@ -91,39 +90,42 @@ def execute_staff_menu_choice(choice):
     if choice == "1":
         display_table(query_view, table_name, column_names)
     if choice == "2":
-        print("amend")
-        amend_record(query_view, table_name, column_names)
+        add_record(query_view, table_name, column_names)
     if choice == "3":
+        amend_record(query_view, table_name, column_names)
+    if choice == "4":
         remove_record(query_view, table_name, column_names)
     if choice == 'E':
         exit()
 
 def execute_airport_menu_choice(choice):
-    table_name = 'airports'
+    table_name = 'airport'
     column_names = ["No.", "Code", "Name", "City", "Country", "Continent", "Status"]
     query_view = 'view_airports'
 
     if choice == "1":
         display_table(query_view, table_name, column_names)
     if choice == "2":
-        amend_record(query_view, table_name, column_names)
+        add_record(query_view, table_name, column_names)
     if choice == "3":
+        amend_record(query_view, table_name, column_names)
+    if choice == "4":
         remove_record(query_view, table_name, column_names)
     if choice == 'E':
         exit()
 
-def execute_staff_amend_menu_choice(choice):
-    table_name = 'staff'
-    query_amend = 'amend_staff'
-
+def execute_sub_menu_choice(choice):
     if choice == "1":
-        value = 'surname'
+        display_table(query_view, table_name, column_names)
+        return
     if choice == "2":
-        value = 'forname'
+        add_record(query_view, table_name, column_names)
+        return
     if choice == "3":
-        value = 'role'
+        amend_record(query_view, table_name, column_names)
+        return
     if choice == "4":
-        value = 'license_status'
+        remove_record(query_view, table_name, column_names)
+        return
     if choice == 'E':
         exit()
-    #amend(query_amend, table_name, value)

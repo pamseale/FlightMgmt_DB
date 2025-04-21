@@ -54,7 +54,37 @@ def amend_staff_record(query_name, table_name, column_names):
         print(f"Row {record_no} does not exist.")
     conn.close
 """
+"""
 
+    print("1. Plane")
+    print("2. Departure airport")
+    print("3. Arrival airport")
+    print("4. Pilot")
+    print("5. First Officer")
+    print("6. Relief Captain")
+    print("7. Scheduled departure date/time")
+    print("8. Scheduled arrival date/time")
+    print("9. Actual departure date/time")
+    print("10. Actual arrival date/time")
+    print("\n Which value would you like to update?\n")
+
+    
+def execute_staff_amend_menu_choice(choice):
+    table_name = 'staff'
+    query_amend = 'amend_staff'
+
+    if choice == "1":
+        value = 'surname'
+    if choice == "2":
+        value = 'forname'
+    if choice == "3":
+        value = 'role'
+    if choice == "4":
+        value = 'license_status'
+    if choice == 'E':
+        exit()
+    #amend(query_amend, table_name, value)
+"""
 
 """    FOREIGN KEY (first_officer_ID) REFERENCES staff(ID),
     FOREIGN KEY (relief_captain_ID) REFERENCES staff(ID),"""
