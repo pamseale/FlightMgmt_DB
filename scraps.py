@@ -1,4 +1,72 @@
+"""    FOREIGN KEY (first_officer_ID) REFERENCES staff(ID),
+    FOREIGN KEY (relief_captain_ID) REFERENCES staff(ID),"""
 
+"""def print_flight_menu():
+    print("Would you like to:")
+    print("1. View flight data")
+    print("2. Amend flight data")
+    print("3. Remove a flight from the database")
+
+def print_staff_menu():
+    print("Would you like to:")
+    print("1. View pilot or staff data")
+    print("2. Amend pilot or staff data")
+    print("3. Remove a staff record from the database")
+
+def print_airport_menu():
+    print("Would you like to:")
+    print("1. View airport data")
+    print("2. Amend airport data")
+    print("3. Remove an airport from the database")"""
+
+"""def remove_staff():
+#    conn = sqlite3.connect('flight_management_database.db')
+#    column_names = ["No.", "Staff ID", "Surname", "Forname", "Role", "License no.", "License status"]
+    display_table('view_staff', column_names)
+    num_rows = row_count(conn, 'staff')
+    print("\nWhich record would you like to delete?\n")
+#    print(num_rows)
+    valid_input = request_and_validate(1, num_rows)
+    remove_record(conn, 'staff', int(valid_input))
+    conn.commit
+    conn.close"""
+"""
+def display_table(conn, query_name, display_column_names):
+    conn = sqlite3.connect('flight_management_database.db')
+    cursor = conn.cursor()
+    query = load_query("view_queries.sql", query_name)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = list(zip(*rows)) if rows else [[] for _ in display_column_names]
+    col_widths = [max(len(str(item)) for item in col + (header,)) for col, header in zip(columns, display_column_names)]
+    format_str = " | ".join(f"{{:<{width}}}" for width in col_widths)
+    print(format_str.format(*display_column_names))
+    print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
+    for row in rows:
+        safe_row = [str(item) if item is not None else "" for item in row]
+        print(format_str.format(*safe_row))
+"""
+
+
+"""
+def flight_menu():
+    print_flight_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def staff_menu():
+    print_staff_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
+def airport_menu():
+    print_airport_menu()
+    num_options = 3
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+"""
 """def display_table(conn, table_name):
     conn = sqlite3.connect('flight_management_database.db')
     conn.row_factory = dict_factory

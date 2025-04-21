@@ -3,8 +3,6 @@ from function import *
 from menu_functions import *
 from db_functions import *
 
-
-
 def main():
    import_db()
    welcome()
@@ -17,5 +15,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 

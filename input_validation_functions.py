@@ -7,7 +7,7 @@ def check_in_range(value, low, high):
 
 def request_and_validate(low, high):
     while True:
-        choice = input("Select a menu choice or 'E' to exit.")
+        choice = input("Enter a number or 'E' to exit.")
         if choice == "E":
             exit()
         else:
