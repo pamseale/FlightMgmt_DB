@@ -22,6 +22,12 @@ def main_menu(option):
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
+def flight_view_menu():
+    print_flight_view_menu()
+    num_options = 4
+    valid_input = request_and_validate(1, num_options)
+    return valid_input
+
 def print_start_menu():
     print("\nWould you like to view, edit or update:")
     print("1. Flight information")
@@ -38,6 +44,13 @@ def print_sub_menu(table_name):
     else:
         print(f"4. Remove a {table_name} record from the database")
 
+def print_flight_view_menu():
+    print("Would you like to:")
+    print(f"1. View all flight data")
+    print(f"2. View data by pilot")
+    print(f"3. View data by destination")
+    print(f"4. View data by departure date")
+
 def execute_start_menu_choice(choice):
     if choice == "1":
         dict = flight_dict
@@ -53,7 +66,23 @@ def execute_start_menu_choice(choice):
 
 def execute_sub_menu_choice(choice, dict):
     if choice == "1":
-        display_table(dict)
+        choice = flight_view_menu()
+        if choice == "1":
+            query = 'view_flights'
+            display_table(dict, query)
+            return
+        if choice == "2":
+            query = ""
+            display_table(dict, query)
+            return
+        if choice == "3":
+            query = ""
+            display_table(dict, query)
+            return
+        if choice == "4":
+            query = ""
+            display_table(dict, query)
+            return
         return
     if choice == "2":
         add_record(dict)

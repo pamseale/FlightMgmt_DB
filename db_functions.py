@@ -19,7 +19,7 @@ flight_dict = {
                         {'display': "8. Scheduled arrival date/time", 'col': "date_arr_scheduled"},
                         {'display': "9. Actual departure date/time", 'col': "date_dep_actual"},
                         {'display': "10. Actual arrival date/time", 'col': "date_dep_actual"} ],
-    "query_name": "view_flights"
+    "query_names": ["view_flights", "view_flights_by_pilot"]
 }
 
 staff_dict = {
@@ -28,7 +28,7 @@ staff_dict = {
     "amend_options": [  {'display': "1. Surname", 'col': "surname"},
                         {'display': "2. Forename", 'col': "forename"},
                         {'display': "3. Role", 'col': "role"} ],
-    "query_name": "view_staff"
+    "query_names": ["view_staff"]
 }
 
 airport_dict = {
@@ -36,7 +36,7 @@ airport_dict = {
     "col_headers":["No.", "Code", "Name", "City", "Country", "Continent", "Status"],
     "amend_options": [  {'display': "1. Name", 'col': "name"},
                         {'display': "2. Status", 'col': "status"} ],
-    "query_name": "view_airports"
+    "query_names": ["view_airports"]
 }
 
 #import database
@@ -69,14 +69,14 @@ def load_query(file_path, query_name):
     raise ValueError(f"Query {query_name} not found.")
 
 
-def display_table(dict):
+def display_table(dict, query):
     #table_name = dict['table_name']
-    print(f"\nAll {dict['table_name']} information:\n")
+    print(f"\{dict['table_name']} information:\n")
     # create connection object
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
     # get SQL query from file and execute
-    query = load_query("view_queries.sql", dict['query_name'])
+    query = load_query("view_queries.sql", query)
     cursor.execute(query)
     rows = cursor.fetchall()
     numbered_rows = add_numbering(rows)
