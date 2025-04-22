@@ -1,4 +1,4 @@
--- view_flights
+-- view_all_flights
 SELECT 
     f.ID,
     f.plane_ID,
@@ -25,7 +25,7 @@ FROM flight as f
 LEFT JOIN staff as p ON p.ID=f.pilot_ID 
 LEFT JOIN staff as fo ON fo.ID=f.first_officer_ID 
 LEFT JOIN staff as rc ON rc.ID=f.relief_captain_ID
-WHERE pilot = ?;
+WHERE p.ID = ?;
 
 -- view_flights_by_dep_aiport
 SELECT 
@@ -62,3 +62,14 @@ SELECT
     s.license_status
 FROM staff as s;
 
+-- view_pilots_with_flights
+SELECT 
+    s.ID,
+    s.surname,
+    s.forename,
+    s.role,
+    s.license_ID,
+    s.license_status
+FROM staff as s
+LEFT JOIN flight as f ON f.pilot_ID=s.ID
+WHERE s.role = 'pilot';

@@ -1,5 +1,6 @@
-from db_functions import *
-from input_validation import *
+from db_functions import display_all, display_filtered
+from input_validation import request_and_validate
+from dictionaries import flight_dict, staff_dict, airport_dict
 
 def welcome():
     print("_________________________           ____")
@@ -11,19 +12,19 @@ def welcome():
 
 
 def start_menu():
-    print_start_menu()
+    print_start_menu() # flight, pilot or airport
     num_options = 3
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
 def main_menu(option):
-    print_sub_menu(option)
+    print_sub_menu(option) # view add amend or remove
     num_options = 4
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
 def flight_view_menu():
-    print_flight_view_menu()
+    print_flight_view_menu() # all, by pilot, by destination, by departure date
     num_options = 4
     valid_input = request_and_validate(1, num_options)
     return valid_input
@@ -48,53 +49,68 @@ def print_flight_view_menu():
     print("Would you like to:")
     print(f"1. View all flight data")
     print(f"2. View data by pilot")
+ #   print(f"3. View data by destination")
+ #   print(f"4. View data by departure date")
+
+def pilot_choice_menu(dict):
+#    display_table(dict, "view_flights_by_pilot")
+    print("Would you like to:")
+    print(f"1. View all flight data")
+    print(f"2. View data by pilot")
     print(f"3. View data by destination")
     print(f"4. View data by departure date")
 
-def execute_start_menu_choice(choice):
-    if choice == "1":
-        dict = flight_dict
-    if choice == "2":
-        dict = staff_dict
-    if choice == "3":
-        dict = airport_dict
-    if choice == 'E':
+def get_filter_id(filter):
+    filter_id = input("\nEnter the ID of the " + filter + " you would like to filter by:  ")
+    return filter_id
+
+def execute_menu_choice(input):
+
+    if input == 'E':
         exit()
-    choice = main_menu(dict['table_name'])
-    execute_sub_menu_choice(choice, dict)
+    if input == "1":
+        dict = flight_dict
+    if input == "2":
+        dict = staff_dict
+    if input == "3":
+        dict = airport_dict
 
-
-def execute_sub_menu_choice(choice, dict):
-    if choice == "1":
-        choice = flight_view_menu()
-        if choice == "1":
-            query = 'view_flights'
-            display_table(dict, query)
+    choice = main_menu(dict['table_name']) # view add amend remove 
+    if choice == "1": # view       
+        filter = flight_view_menu() # all, by pilot, destination or departure date
+        if filter == "1": # all
+            query = 'view_all_flights'
+            display_filtered(dict, query)
             return
-        if choice == "2":
-            query = ""
-            display_table(dict, query)
+        if filter == "2": # by pilot
+            query = 'view_flights_by_pilot'
+            print("\n")
+            display_filtered(dict, 'view_pilots_with_flights')
+            filter_id = get_filter_id('pilot')
+            print(filter_id)
+            display_filtered(dict, query, filter_id)
             return
-        if choice == "3":
-            query = ""
-            display_table(dict, query)
+        if filter == "3":
+            print("by destination")
+            query = 'view_flights_by_dest'
             return
-        if choice == "4":
-            query = ""
-            display_table(dict, query)
-            return
-        return
-    if choice == "2":
+    if choice == "2": # add
         add_record(dict)
         return
-    if choice == "3":
+    if choice == "3": # amend
         update_record(dict)
         return
-    if choice == "4":
+    if choice == "4": # remove
         remove_record(dict)
         return
     if choice == 'E':
         exit()
+
+
+#    execute_sub_menu_choice(choice, dict) # e.g. view flight
+
+
+
 
 
 def get_new_flight_record():

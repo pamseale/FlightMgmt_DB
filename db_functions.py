@@ -1,14 +1,19 @@
 import sqlite3
-from function import *
-from menu_functions import *
-from input_validation import *
+
+from input_validation import request_and_validate
 from formatting import *
+#from menu_functions import flight_view_menu
 
 db_filename = 'flight_management_database.db'
-
+"""
 flight_dict = {
     "table_name": "flight",
-    "col_headers":["No.", "Flight no.", "Plane", "Dep", "Arr", "Pilot", "First Officer", "Relief Captain", "Departure (sch.)", "Arrival (sch.)", "Departure (act.)", "Arrival (act)"],
+    "display_headers":["No.", "Flight no.", "Plane", "Dep", "Arr", "Pilot", "First Officer", "Relief Captain", "Departure (sch.)", "Arrival (sch.)", "Departure (act.)", "Arrival (act)"],
+    "actual_headers":["plane_ID", "airport_dep_ID", "airport_arr_ID", "pilot_ID", "first_officer_ID", "relief_captain_ID", "date_dep_scheduled", "date_arr_scheduled", "date_dep_actual", "date_dep_actual"],
+    "amend_options":["1. Plane", "2. Departure airport", "3. Arrival airport", "4. Pilot", "5. First Officer", "6. Relief Captain", "7. Scheduled departure date/time", "8. Scheduled arrival date/time", "9. Actual departure date/time", "10. Actual arrival date/time"],
+    "query_names": ["view_all_flights", "view_flights_by_pilot"]
+}
+
     "amend_options": [  {'display': "1. Plane", 'col': "plane_ID"},
                         {'display': "2. Departure airport", 'col': "airport_dep_ID"},
                         {'display': "3. Arrival airport", 'col': "airport_arr_ID"},
@@ -19,9 +24,6 @@ flight_dict = {
                         {'display': "8. Scheduled arrival date/time", 'col': "date_arr_scheduled"},
                         {'display': "9. Actual departure date/time", 'col': "date_dep_actual"},
                         {'display': "10. Actual arrival date/time", 'col': "date_dep_actual"} ],
-    "query_names": ["view_flights", "view_flights_by_pilot"]
-}
-
 staff_dict = {
     "table_name": "staff",
     "col_headers":["No.", "Staff ID", "Surname", "Forname", "Role", "License no.", "License status"],
@@ -39,6 +41,7 @@ airport_dict = {
     "query_names": ["view_airports"]
 }
 
+
 #import database
 def import_db():
     # read .sql file
@@ -53,6 +56,8 @@ def import_db():
     conn.commit()
     # close db connection
     conn.close()
+"""
+
 
 def load_query(file_path, query_name):
     # read query file
@@ -69,20 +74,85 @@ def load_query(file_path, query_name):
     raise ValueError(f"Query {query_name} not found.")
 
 
-def display_table(dict, query):
+def execute_sub_menu_choice(choice, dict):  # e.g. view flight
+    conn = sqlite3.connect(db_filename)
+    if choice == "1": # view
+        filter = flight_view_menu() # all, by pilot, destination or departure date
+        if filter == "1": # all
+            query = load_query("view_queries.sql", 'view_all_flights')
+            cursor.execute(query)
+       #     display_table(dict, 'view_flights')
+            return
+        if choice == "2": # by pilot
+            query = 'view_flights_by_pilot'
+            load_query('view_queries.sql', query)
+       #     display_table(dict, 'view_flights')
+            return
+        if choice == "3":
+            print("by destination")
+            return
+    if choice == "2": # add
+        add_record(dict)
+        return
+    if choice == "3": # amend
+        update_record(dict)
+        return
+    if choice == "4": # remove
+        remove_record(dict)
+        return
+    if choice == 'E':
+        exit()
+
+def display_all(dict, query, args=None):
     #table_name = dict['table_name']
     print(f"\{dict['table_name']} information:\n")
     # create connection object
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
     # get SQL query from file and execute
-    query = load_query("view_queries.sql", query)
-    cursor.execute(query)
+    sql = load_query("view_queries.sql", query)
+    print(sql)
+    #cursor.execute(sql)
+
+    if args:
+        cursor.execute(sql, args)
+    else:
+        cursor.execute(sql)
+    
     rows = cursor.fetchall()
     numbered_rows = add_numbering(rows)
-    col_widths = calc_padding(numbered_rows, dict['col_headers'])
+    col_widths = calc_padding(numbered_rows, dict['display_headers'])
     headers = add_padding(col_widths)
-    print(headers.format(*dict['col_headers']))
+    print(headers.format(*dict['display_headers']))
+    print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
+    # allow for NULL value entries
+    for row in numbered_rows:
+        safe_row = [str(item) if item is not None else "" for item in row]
+        print(headers.format(*safe_row))
+    conn.commit
+    conn.close
+
+def display_filtered(dict, query, args=None):
+    #table_name = dict['table_name']
+    #print(f"\{dict['table_name']} information:\n")
+    # create connection object
+    conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+    # get SQL query from file and execute
+    sql = load_query("view_queries.sql", query)
+  #  print(sql)
+    print(args)
+
+    print("\n")
+    if args:
+        cursor.execute(sql, (args,))
+    else:
+        cursor.execute(sql)
+    rows = cursor.fetchall()
+    numbered_rows = add_numbering(rows)
+    col_widths = calc_padding(numbered_rows, dict['display_headers'])
+    headers = add_padding(col_widths)
+    print(headers.format(*dict['display_headers']))
     print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
     # allow for NULL value entries
     for row in numbered_rows:

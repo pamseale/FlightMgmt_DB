@@ -1,15 +1,13 @@
-import sqlite3
-from function import *
-from menu_functions import *
-from db_functions import *
+from db_import import import_db
+from menu_functions import welcome, start_menu, execute_menu_choice
 
 def main():
    import_db()
    welcome()
    run = True
    while(run):
-      menu_choice = start_menu()
-      execute_start_menu_choice(menu_choice)
+      choice = start_menu()
+      execute_menu_choice(choice)
       print("\nquery completed\n")
    exit()
 
