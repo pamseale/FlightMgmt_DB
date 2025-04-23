@@ -3,14 +3,14 @@ import sqlite3
 from input_validation import request_and_validate
 from formatting import *
 from get_new_record_functions import *
-#from menu_functions import flight_view_menu
 
 db_filename = 'flight_management_database.db'
+queries_filename = 'queries.sql'
 
 def execute_query(query):
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
-    sql = load_query("view_queries.sql", query)
+    sql = load_query(queries_filename, query)
 
 
 def load_query(file_path, query_name):
@@ -33,13 +33,13 @@ def execute_sub_menu_choice(choice, dict):  # e.g. view flight
     if choice == "1": # view
         filter = flight_view_menu() # all, by pilot, destination or departure date
         if filter == "1": # all
-            query = load_query("view_queries.sql", 'view_all_flights')
+            query = load_query(queries_filename, 'view_all_flights')
             cursor.execute(query)
        #     display_table(dict, 'view_flights')
             return
         if choice == "2": # by pilot
             query = 'view_flights_by_pilot'
-            load_query('view_queries.sql', query)
+            load_query(queries_filename, query)
        #     display_table(dict, 'view_flights')
             return
         if choice == "3":
@@ -64,7 +64,7 @@ def display_records(dict, query, args=None):
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
     # get SQL query from file and execute
-    sql = load_query("view_queries.sql", query)
+    sql = load_query(queries_filename, query)
     print("\n")
     if args:
         cursor.execute(sql, (args,))
@@ -154,12 +154,9 @@ def add_record(dict):
     columns_str = ', '.join(column_names)  # joins into one string
     placeholders = ', '.join(['?'] * len(column_names))  # creates '?, ?, ?, ?'
     args = get_new_record_values(dict['table_name'])
-    print(args)
-    print(len(args))
     if len(args) != len(column_names):
         raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
     sql = f"INSERT INTO {dict['table_name']} ({columns_str}) VALUES ({placeholders})"
-    print(sql)
     cursor.execute(sql, args)
     conn.commit()        
     print(f"Record added ({args[1]})")

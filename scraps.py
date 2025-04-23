@@ -10,6 +10,7 @@
 """
 
 """
+CREATE VIEW IF NOT EXISTS flight_view AS SELECT * FROM flight;
 def display_all(dict, query, args=None):
     #table_name = dict['table_name']
     print(f"\{dict['table_name']} information:\n")

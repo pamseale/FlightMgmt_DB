@@ -9,12 +9,10 @@ SELECT
     DATE(f.date_arr_scheduled),
     TIME(f.date_arr_scheduled),
     p.surname AS pilot,
-    fo.surname AS first_officer, 
-    rc.surname AS relief_captain 
+    fo.surname AS first_officer
 FROM flight as f 
 LEFT JOIN staff as p ON p.ID=f.pilot_ID 
 LEFT JOIN staff as fo ON fo.ID=f.first_officer_ID 
-LEFT JOIN staff as rc ON rc.ID=f.relief_captain_ID;
 
 -- view_flights_by_pilot
 SELECT 
