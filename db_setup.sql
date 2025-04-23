@@ -84,7 +84,7 @@ INSERT INTO airport VALUES ('BIR', 'Birmingham Airport', 'Birmingham', 'UK', 'Eu
 INSERT INTO airport VALUES ('MAL', 'Malaga Airport', 'Malaga', 'Spain', 'Europe', 'open');
 INSERT INTO airport VALUES ('GIG', 'Galeão International Airport', 'Rio de Janeiro', 'Brazil', 'South America', 'open');
 INSERT INTO airport VALUES ('CDG', 'Charles de Gaulle Airport', 'Paris', 'France', 'Europe', 'open');
-INSERT INTO airport VALUES ('SVO', 'Sheremetyevo International Airport,', 'Moscow', 'Russia', 'Europe', 'open');
+INSERT INTO airport VALUES ('SVO', 'Sheremetyevo International Airport', 'Moscow', 'Russia', 'Europe', 'open');
 INSERT INTO airport VALUES ('HKG', 'Kai Tak International Airport', 'Kowloon', 'Hong Kong', 'Asia', 'open');
 
 INSERT INTO airport_status VALUES ('open');

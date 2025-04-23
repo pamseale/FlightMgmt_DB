@@ -1,4 +1,47 @@
 """
+        if (dict['table_name'] == 'flight') and (col_to_update == '1' or '2' or '3'):
+            cursor.execute(f"SELECT * from {dict['table_name']} ")
+            rows = cursor.fetchall()
+            print("Please choose from the following list of pilots:")
+            query = 'view_pilots'
+            display_records(dict, query)
+            updated_value = input("Enter the staff ID of the pilot you wish to assign to flight " + rows[index][0] + ":")
+            col_to_update = '2'
+"""
+
+"""
+def display_all(dict, query, args=None):
+    #table_name = dict['table_name']
+    print(f"\{dict['table_name']} information:\n")
+    # create connection object
+    conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+    # get SQL query from file and execute
+    sql = load_query("view_queries.sql", query)
+    print(sql)
+    #cursor.execute(sql)
+
+    if args:
+        cursor.execute(sql, args)
+    else:
+        cursor.execute(sql)
+    
+    rows = cursor.fetchall()
+    numbered_rows = add_numbering(rows)
+    col_widths = calc_padding(numbered_rows, dict['display_headers'])
+    headers = add_padding(col_widths)
+    print(headers.format(*dict['display_headers']))
+    print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
+    # allow for NULL value entries
+    for row in numbered_rows:
+        safe_row = [str(item) if item is not None else "" for item in row]
+        print(headers.format(*safe_row))
+    conn.commit
+    conn.close
+"""
+
+
+"""
 def amend_record(query_name, table_name, column_names):
     conn = sqlite3.connect('flight_management_database.db')
     cursor = conn.cursor()

@@ -11,16 +11,12 @@ def add_numbering(rows):
 
 # calculate padding for printing column headers
 def calc_padding(rows, column_names):
-
-
     columns = list(zip(*rows)) if rows else [[] for _ in column_names]
-
     # Ensure each column is a list for safe concatenation with [header]
     widths = [
         max(len(str(item)) if item is not None else 0 for item in list(col) + [header])
         for col, header in zip(columns, column_names)
     ]
-
     """
 
     columns = list(zip(*rows)) if rows else [[] for _ in column_names]
