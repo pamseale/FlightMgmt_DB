@@ -1,4 +1,88 @@
 """
+
+
+f.pilot_ID = ?
+
+
+-- view_all_airports
+CREATE VIEW IF NOT EXISTS view_all_airports AS
+SELECT 
+    a.ID,
+    a.name,
+    a.city,
+    a.country,
+    a.continent,
+    a.airport_status
+FROM airport as a
+LEFT JOIN airport_status AS as ON as.ID=a.airport_status;
+
+-- view_all_staff
+CREATE VIEW IF NOT EXISTS view_all_staff AS
+SELECT 
+    s.ID,
+    s.surname,
+    s.forename,
+    s.role
+FROM staff as s;
+-- view_all_flights
+CREATE VIEW IF NOT EXISTS view_all_flights AS
+SELECT 
+    f.ID,
+    p.registration,
+    f.airport_dep_ID,
+    DATE(f.date_dep_scheduled),
+    TIME(f.date_dep_scheduled),
+    f.airport_arr_ID,
+    DATE(f.date_arr_scheduled),
+    TIME(f.date_arr_scheduled),
+    pi.surname AS pilot,
+    fo.surname AS first_officer
+FROM flight as f
+LEFT JOIN plane AS p ON p.ID=f.plane_ID
+LEFT JOIN staff AS pi ON pi.ID=f.pilot_ID 
+LEFT JOIN staff AS fo ON fo.ID=f.first_officer_ID;
+
+
+INSERT INTO staff VALUES ('ST001', 'Lancaster', 'Timothy', 'pilot', 'AV02791', 'current');
+INSERT INTO staff VALUES ('ST002', 'Aitchison', 'Alastair', 'pilot', 'AV51244', 'current');
+INSERT INTO staff VALUES ('ST003', 'Ogden', 'Nigel', 'cabin crew', NULL, NULL);
+INSERT INTO staff VALUES ('ST004', 'Dubois', 'Marc', 'pilot', 'AV10769', 'current');
+INSERT INTO staff VALUES ('ST005', 'Robert', 'David', 'pilot', 'AV96931', 'current');
+INSERT INTO staff VALUES ('ST006', 'Bonin', 'Pierre-Cedric', 'pilot', 'AV25581', 'current');
+INSERT INTO staff VALUES ('ST007', 'Danilov', 'Andrey', 'pilot', 'AV85311', 'current');
+INSERT INTO staff VALUES ('ST008', 'Piskaryov', 'Igor', 'pilot', 'AV66931', 'current');
+INSERT INTO staff VALUES ('ST009', 'Kudrinsky', 'Yaroslav', 'pilot', 'AV20818', 'current');
+INSERT INTO staff VALUES ('ST010', 'Sullenberger', 'Chelsey', 'pilot', 'AV99372', 'current');
+INSERT INTO staff VALUES ('ST011', 'Skiles', 'Jeffrey', 'pilot', 'AV18365', 'current');
+
+
+CREATE TABLE IF NOT EXISTS license_status (
+    ID VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    PRIMARY KEY (ID)
+    );
+
+   conn = sqlite3.connect('flight_management_database.db')
+   cursor = conn.cursor()
+   #cursor.execute("SELECT name FROM sqlite_master WHERE type='view'")
+   #print(cursor.fetchall())
+
+   cursor.execute("SELECT * FROM view_all_fs")
+   rows = cursor.fetchall()
+   # Get column names
+   column_names = [desc[0] for desc in cursor.description]
+
+   # Print header
+   print(" | ".join(column_names))
+   print("-" * (len(column_names) * 15))  # just for spacing
+
+   # Print rows
+   for row in rows:
+      print(" | ".join(str(item) for item in row))
+      print(rows)
+
+
+
         if (dict['table_name'] == 'flight') and (col_to_update == '1' or '2' or '3'):
             cursor.execute(f"SELECT * from {dict['table_name']} ")
             rows = cursor.fetchall()

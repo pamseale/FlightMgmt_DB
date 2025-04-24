@@ -1,10 +1,12 @@
 DROP TABLE IF EXISTS staff;
-DROP TABLE IF EXISTS license_status;
 DROP TABLE IF EXISTS airport;
 DROP TABLE IF EXISTS airport_status;
 DROP TABLE IF EXISTS plane;
 DROP TABLE IF EXISTS flight;
-DROP VIEW IF EXISTS flight_view;
+
+    DROP VIEW IF EXISTS view_all_flights;
+DROP VIEW IF EXISTS view_all_staff;
+DROP VIEW IF EXISTS view_all_airports;
 
 
 CREATE TABLE IF NOT EXISTS staff (
@@ -12,34 +14,29 @@ CREATE TABLE IF NOT EXISTS staff (
     surname VARCHAR(255) NOT NULL,
     forename VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL,
-    license_ID VARCHAR(20),
-    license_status VARCHAR(20),
-    PRIMARY KEY (ID)
-    );
-
-CREATE TABLE IF NOT EXISTS license_status (
-    ID VARCHAR(20) NOT NULL,
-    status VARCHAR(20) NOT NULL,
     PRIMARY KEY (ID)
     );
 
 CREATE TABLE IF NOT EXISTS airport (
     ID VARCHAR(3) NOT NULL,
+    IATA_code  VARCHAR(3) NOT NULL,
     name VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     country VARCHAR(255) NOT NULL,
     continent VARCHAR(255) NOT NULL,
-    airport_status_ID VARCHAR(20) NOT NULL,
+    airport_status VARCHAR(20) NOT NULL,
     PRIMARY KEY (ID)
     );
 
 CREATE TABLE IF NOT EXISTS airport_status (
-    status VARCHAR(20) NOT NULL,
+    status int NOT NULL,
+    status_desc VARCHAR(20),
     PRIMARY KEY (status)
     );
 
 CREATE TABLE IF NOT EXISTS plane (
     ID VARCHAR(20) NOT NULL,
+    registration VARCHAR(20) NOT NULL UNIQUE,
     type VARCHAR(255),
     year_manufacture YEAR,
     num_pilots INT,
@@ -57,8 +54,6 @@ CREATE TABLE IF NOT EXISTS flight (
     first_officer_ID VARCHAR(20),
     date_dep_scheduled DATETIME NOT NULL,
     date_arr_scheduled DATETIME NOT NULL,
-    date_dep_actual DATETIME,
-    date_arr_actual DATETIME,
     FOREIGN KEY (plane_ID) REFERENCES plane(ID),
     FOREIGN KEY (airport_dep_ID) REFERENCES airport(ID),
     FOREIGN KEY (airport_arr_ID) REFERENCES airport(ID),
@@ -68,31 +63,77 @@ CREATE TABLE IF NOT EXISTS flight (
     );
 
 
-INSERT INTO staff VALUES ('STID0001', 'Lancaster', 'Timothy', 'pilot', 'AV027691', 'current');
-INSERT INTO staff VALUES ('STID0002', 'Aitchison', 'Alastair', 'pilot', 'AV512944', 'current');
-INSERT INTO staff VALUES ('STID0003', 'Ogden', 'Nigel', 'cabin crew', NULL, NULL);
-INSERT INTO staff VALUES ('STID0004', 'Dubois', 'Marc', 'pilot', 'AV107369', 'current');
-INSERT INTO staff VALUES ('STID0005', 'Robert', 'David', 'pilot', 'AV969312', 'current');
-INSERT INTO staff VALUES ('STID0006', 'Bonin', 'Pierre-Cedric', 'pilot', 'AV295581', 'current');
-INSERT INTO staff VALUES ('STID0007', 'Danilov', 'Andrey', 'pilot', 'AV853011', 'current');
-INSERT INTO staff VALUES ('STID0008', 'Piskaryov', 'Igor', 'pilot', 'AV669301', 'current');
-INSERT INTO staff VALUES ('STID0009', 'Kudrinsky', 'Yaroslav', 'pilot', 'AV208218', 'current');
+INSERT INTO staff VALUES ('ST001', 'Lancaster', 'Timothy', 'pilot');
+INSERT INTO staff VALUES ('ST002', 'Aitchison', 'Alastair', 'pilot');
+INSERT INTO staff VALUES ('ST003', 'Ogden', 'Nigel', 'cabin crew');
+INSERT INTO staff VALUES ('ST004', 'Dubois', 'Marc', 'pilot');
+INSERT INTO staff VALUES ('ST005', 'Robert', 'David', 'pilot');
+INSERT INTO staff VALUES ('ST006', 'Bonin', 'Pierre-Cedric', 'pilot');
+INSERT INTO staff VALUES ('ST007', 'Danilov', 'Andrey', 'pilot');
+INSERT INTO staff VALUES ('ST008', 'Piskaryov', 'Igor', 'pilot');
+INSERT INTO staff VALUES ('ST009', 'Kudrinsky', 'Yaroslav', 'pilot');
+INSERT INTO staff VALUES ('ST010', 'Sullenberger', 'Chelsey', 'pilot');
+INSERT INTO staff VALUES ('ST011', 'Skiles', 'Jeffrey', 'pilot');
 
-INSERT INTO airport VALUES ('BIR', 'Birmingham Airport', 'Birmingham', 'UK', 'Europe', 'open');
-INSERT INTO airport VALUES ('MAL', 'Malaga Airport', 'Malaga', 'Spain', 'Europe', 'open');
-INSERT INTO airport VALUES ('GIG', 'Galeão International Airport', 'Rio de Janeiro', 'Brazil', 'South America', 'open');
-INSERT INTO airport VALUES ('CDG', 'Charles de Gaulle Airport', 'Paris', 'France', 'Europe', 'open');
-INSERT INTO airport VALUES ('SVO', 'Sheremetyevo International Airport', 'Moscow', 'Russia', 'Europe', 'open');
-INSERT INTO airport VALUES ('HKG', 'Kai Tak International Airport', 'Kowloon', 'Hong Kong', 'Asia', 'open');
 
-INSERT INTO airport_status VALUES ('open');
-INSERT INTO airport_status VALUES ('closed');
-INSERT INTO airport_status VALUES ('warning in place');
+INSERT INTO airport VALUES ('APID001', 'BIR', 'Birmingham Airport', 'Birmingham', 'UK', 'Europe', 1);
+INSERT INTO airport VALUES ('APID002', 'MAL', 'Malaga Airport', 'Malaga', 'Spain', 'Europe', 1);
+INSERT INTO airport VALUES ('APID003', 'GIG', 'Galeão International Airport', 'Rio de Janeiro', 'Brazil', 'South America', 2);
+INSERT INTO airport VALUES ('APID004', 'CDG', 'Charles de Gaulle Airport', 'Paris', 'France', 'Europe', 1);
+INSERT INTO airport VALUES ('APID005', 'SVO', 'Sheremetyevo International Airport', 'Moscow', 'Russia', 'Europe', 1);
+INSERT INTO airport VALUES ('APID006', 'HKG', 'Kai Tak International Airport', 'Kowloon', 'Hong Kong', 'Asia', 1);
+INSERT INTO airport VALUES ('APID007', 'LGA', 'LaGuardia Airport', 'New York', 'USA', 'North America', 1);
+INSERT INTO airport VALUES ('APID008', 'SEA', 'Seattle-Tacoma International Airport', 'Seattle', 'USA', 'North America', 1);
 
-INSERT INTO plane VALUES ('G-BJRT', 'BAC One-Eleven 528FL', 1971, 2, 4, 81);
-INSERT INTO plane VALUES ('F-GZCP', 'Airbus A330-203', 2005, 3, 9, 216);
-INSERT INTO plane VALUES ('F-OGQS', 'Airbus A310-304', 1992, 3, 9, 63);
+INSERT INTO airport_status VALUES (1, 'open');
+INSERT INTO airport_status VALUES (2, 'open: alert');
+INSERT INTO airport_status VALUES (3, 'closed');
 
-INSERT INTO flight VALUES ('BA5390', 'G-BJRT', 'BIR', 'MAL', 'STID0001', 'STID0002', '1990-06-10 07:20:00', '1990-06-10 10:15:00', '1990-06-10 07:20:00', '1990-06-10 08:55:00');
-INSERT INTO flight VALUES ('AFR447', 'F-GZCP', 'GIG', 'CDG', 'STID0004', 'STID0005', '2009-05-31 22:29:00', '2009-05-31 09:03:00', '2009-05-31 22:29:00', '2009-05-31 09:03:00');
-INSERT INTO flight VALUES ('AFL593', 'F-OGQS', 'SVO', 'HKG', 'STID0007', 'STID0008', '1994-03-22 10:39:00', '1994-05-31 00:46:00', '1994-03-22 10:39:00', '1994-05-31 00:46:00');
+INSERT INTO plane VALUES ('PID001', 'G-BJRT', 'BAC One-Eleven 528FL', 1971, 2, 4, 81);
+INSERT INTO plane VALUES ('PID002', 'F-GZCP', 'Airbus A330-203', 2005, 3, 9, 216);
+INSERT INTO plane VALUES ('PID003', 'F-OGQS', 'Airbus A310-304', 1992, 3, 9, 63);
+INSERT INTO plane VALUES ('PID004', 'N106US', 'Airbus A320-214', 1984, 2, 3, 150);
+
+INSERT INTO flight VALUES ('BA5390', 'PID001', 'BIR', 'MAL', 'ST001', 'ST002', '1990-06-10 07:20:00', '1990-06-10 10:15:00');
+INSERT INTO flight VALUES ('AFR447', 'PID002', 'GIG', 'CDG', 'ST004', 'ST005', '2009-05-31 22:29:00', '2009-05-31 09:03:00');
+INSERT INTO flight VALUES ('AFL593', 'PID003', 'SVO', 'HKG', 'ST007', 'ST008', '1994-03-22 10:39:00', '1994-05-31 00:46:00');
+INSERT INTO flight VALUES ('US1549', 'PID004', 'LGA', 'SEA', 'ST010', 'ST011', '2009-01-15 20:24:56', '2009-02-15 01:44:00');
+
+CREATE VIEW IF NOT EXISTS view_all_flights AS
+SELECT 
+    f.ID,
+    p.registration,
+    f.airport_dep_ID,
+    DATE(f.date_dep_scheduled),
+    TIME(f.date_dep_scheduled),
+    f.airport_arr_ID,
+    DATE(f.date_arr_scheduled),
+    TIME(f.date_arr_scheduled),
+    pi.surname AS pilot,
+    fo.surname AS first_officer
+FROM flight as f
+LEFT JOIN plane AS p ON p.ID=f.plane_ID
+LEFT JOIN staff AS pi ON pi.ID=f.pilot_ID 
+LEFT JOIN staff AS fo ON fo.ID=f.first_officer_ID;
+
+CREATE VIEW IF NOT EXISTS view_all_airports AS
+SELECT 
+    a.ID,
+    a.IATA_code,
+    a.name,
+    a.city,
+    a.country,
+    a.continent,
+    a.airport_status
+FROM airport as a
+LEFT JOIN airport_status AS st ON st.ID=a.airport_status;
+
+CREATE VIEW IF NOT EXISTS view_all_staff AS
+SELECT 
+    s.ID,
+    s.surname,
+    s.forename,
+    s.role
+FROM staff as s;
+
+

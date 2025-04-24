@@ -57,14 +57,22 @@ def execute_sub_menu_choice(choice, dict):  # e.g. view flight
     if choice == 'E':
         exit()
 
-def display_records(dict, query, args=None):
-    #table_name = dict['table_name']
-    #print(f"\{dict['table_name']} information:\n")
+def display_records(dict, sql, args=None):
+    print(sql)
     # create connection object
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
+ #   query = "SELECT * FROM view_all_flights"
+ #   print(query)
+ #   cursor.execute(query)
+
     # get SQL query from file and execute
-    sql = load_query(queries_filename, query)
+  #  query = dict['query_names'][0]
+  #  print(query)
+  #  sql = load_query('queries.sql', query)
+   # sql = "SELECT * FROM view_all_flights"
+
+    #cursor.execute("SELECT * FROM view_all_flights", )
     print("\n")
     if args:
         cursor.execute(sql, (args,))

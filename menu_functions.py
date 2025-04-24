@@ -1,5 +1,5 @@
 from dictionaries import flight_dict, staff_dict, airport_dict
-from db_functions import display_records, update_record, add_record, remove_record
+from db_functions import display_records, update_record, add_record, remove_record, load_query
 from get_new_record_functions import *
 from input_validation import request_and_validate
 
@@ -65,41 +65,43 @@ def get_filter_id(filter):
     return filter_id
 
 
-
 def execute_menu_choice(choice):
 
     if choice == 'E':
         exit()
     if choice == "1":
         dict = flight_dict
-        print("1. View flight information")
         view_filter = flight_view_menu() # all, by pilot, destination or departure date
         if view_filter == "1": # all
-            query = 'view_all_flights'
+            query = dict['query_names'][0]
             display_records(dict, query)
             return
         if view_filter == "2": # by pilot
-            query = 'view_pilots'
-            display_records(staff_dict, query)
-            query = 'view_flights_by_pilot'
-            print("\n")
+            # display all pilots and get user to select
+            dict = staff_dict
+            query = dict['query_names'][1]
+            display_records(dict, query)
             filter_id = get_filter_id('pilot')
+            # display flights by selected pilot
+            dict = flight_dict
+            query = load_query('queries.sql', 'query_flights_by_pilot')
+            print(query)
+            print("filter ID = " + filter_id)
             display_records(dict, query, filter_id)
             return
         if view_filter == "3": # by destination
-            query = 'view_airports'
-            display_records(airport_dict, query)
-            query = 'view_flights_by_dep_aiport'
-            print("\n")
+            dict = airport_dict
+            query = dict['query_names'][0]
+            display_records(dict, query)
             filter_id = get_filter_id('airport')
+            dict = flight_dict
+            query = load_query('queries.sql', 'query_flights_by_dep_airport')
             display_records(dict, query, filter_id)
             return
         if view_filter == "4": # by departure date
-            query = 'view_all_flights'
-            display_records(dict, query)
-            query = 'view_flights_by_date'
-            print("\n")
+            dict = flight_dict
             filter_id = get_filter_id('date')
+            query = load_query('queries.sql', 'query_flights_by_date')
             display_records(dict, query, filter_id)
             return
         
@@ -119,15 +121,12 @@ def execute_menu_choice(choice):
 
     if (choice == '2' or '5' or '6'):
         if choice == "2":
-            dict = flight_dict#
+            dict = flight_dict
         if choice == "5":
             dict = airport_dict
         if choice == "6":
             dict = staff_dict
-            print("6. View or update staff information")
         execute_VAAR_menu_choice(dict)
-            
-
 
 
 def execute_VAAR_menu_choice(dict):
@@ -144,7 +143,6 @@ def execute_VAAR_menu_choice(dict):
         return
     
     if choice_vaar == "3": # amend
-        #amend_choice = amend_menu(dict)
         update_record(dict)
         return
     
