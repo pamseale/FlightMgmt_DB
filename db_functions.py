@@ -1,45 +1,33 @@
 import sqlite3
-
+from file_handler import load_query_from_file
 from input_validation import request_and_validate
 from formatting import *
-from get_new_record_functions import *
+from get_new_values import *
 
 db_filename = 'flight_management_database.db'
 queries_filename = 'queries.sql'
 
+"""
 def execute_query(query):
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
-    sql = load_query(queries_filename, query)
-
-
-def load_query(file_path, query_name):
-    # read query file
-    with open(file_path, "r") as file:
-        content = file.read()
-    # split file in sections at each comment(--), effectively the query title
-    sections = content.split('-- ')
-    for section in sections:
-#        if not section.strip():
-#            continue
-        if section.startswith(query_name):
-            return section[len(query_name):].strip()
-    # error message if query not found
-    raise ValueError(f"Query {query_name} not found.")
-
+    sql = load_query_from_file(queries_filename, query)
+"""
 
 def execute_sub_menu_choice(choice, dict):  # e.g. view flight
     conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+
     if choice == "1": # view
         filter = flight_view_menu() # all, by pilot, destination or departure date
         if filter == "1": # all
-            query = load_query(queries_filename, 'view_all_flights')
+            query = load_query_from_file(queries_filename, 'view_all_flights')
             cursor.execute(query)
        #     display_table(dict, 'view_flights')
             return
         if choice == "2": # by pilot
             query = 'view_flights_by_pilot'
-            load_query(queries_filename, query)
+            load_query_from_file(queries_filename, query)
        #     display_table(dict, 'view_flights')
             return
         if choice == "3":
@@ -69,7 +57,7 @@ def display_records(dict, sql, args=None):
     # get SQL query from file and execute
   #  query = dict['query_names'][0]
   #  print(query)
-  #  sql = load_query('queries.sql', query)
+  #  sql = load_query_from_file('queries.sql', query)
    # sql = "SELECT * FROM view_all_flights"
 
     #cursor.execute("SELECT * FROM view_all_flights", )
@@ -90,13 +78,6 @@ def display_records(dict, sql, args=None):
         print(headers.format(*safe_row))
     conn.commit
     conn.close
-
-
-def print_amend_options(dict):
-    print("\nYou have permission to update the following records:\n")
-    for opt in dict['amend_options']:
-        print (opt)
-    print("\n")
 
 
 def row_count(conn, table_name):
@@ -145,23 +126,27 @@ def update_record(dict):
     conn.close
 
 
-def get_new_record_values(table):
+def get_new_record_values(table, last_record_id):
     if table == 'flight':
-        return get_new_flight_values()
+        return get_new_flight_values(last_record_id)
     if table == 'staff':
-        return get_new_staff_values()
+        return get_new_staff_values(last_record_id)
     if table == 'airport':
-        return get_new_airport_values()
+        return get_new_airport_values(last_record_id)
 
 
 def add_record(dict):
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
+    sql = load_query_from_file('queries.sql', 'get_last_record')
+    sql = f"SELECT ID FROM {dict['table_name']} ORDER BY ID DESC LIMIT 1;"
+    cursor.execute(sql)
+    last_id = cursor.fetchone()
     cursor.execute(f"SELECT * from {dict['table_name']} LIMIT 1")
     column_names = [desc[0] for desc in cursor.description]
     columns_str = ', '.join(column_names)  # joins into one string
     placeholders = ', '.join(['?'] * len(column_names))  # creates '?, ?, ?, ?'
-    args = get_new_record_values(dict['table_name'])
+    args = get_new_record_values(dict['table_name'], last_id)
     if len(args) != len(column_names):
         raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
     sql = f"INSERT INTO {dict['table_name']} ({columns_str}) VALUES ({placeholders})"

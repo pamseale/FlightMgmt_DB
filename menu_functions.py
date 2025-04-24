@@ -1,6 +1,7 @@
 from dictionaries import flight_dict, staff_dict, airport_dict
-from db_functions import display_records, update_record, add_record, remove_record, load_query
-from get_new_record_functions import *
+from db_functions import display_records, update_record, add_record, remove_record
+from file_handler import load_query_from_file
+from get_new_values import *
 from input_validation import request_and_validate
 
 
@@ -14,10 +15,11 @@ def welcome():
 
 
 def start_menu():
-    print_start_menu() # flight, pilot or airport
+    print_start_menu()
     num_options = 6
     valid_input = request_and_validate(1, num_options)
     return valid_input
+
 
 def print_start_menu():
     print("\nWould you like to: ")
@@ -28,21 +30,24 @@ def print_start_menu():
     print("5. View or change airport information")
     print("6. View or change staff information")
 
+
 def VAAR_menu(option):
     print_VAAR_menu(option) # view add amend or remove
     num_options = 4
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
+
 def print_VAAR_menu(table_name):
     print("Would you like to:")
-    print(f"1. View {table_name} data")
-    print(f"2. Add {table_name} data")
-    print(f"3. Amend {table_name} data")
+    print(f"1. View {table_name} information")
+    print(f"2. Add a new {table_name} record")
+    print(f"3. Update {table_name} information")
     if table_name == 'airport':
         print(f"4. Remove an {table_name} record from the database")
     else:
         print(f"4. Remove a {table_name} record from the database")
+
 
 def flight_view_menu():
     print_flight_view_menu() # flights by all, pilot, dest, date
@@ -50,12 +55,21 @@ def flight_view_menu():
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
+
 def print_flight_view_menu():
     print("Would you like to:")
     print(f"1. View all flight data")
     print(f"2. View flights by pilot")
     print(f"3. View flights by destination")
     print(f"4. View flights by departure date")
+
+
+def print_amend_options(dict):
+    print("\nYou have permission to update the following records:\n")
+    for opt in dict['amend_options']:
+        print (opt)
+    print("\n")
+
 
 def get_filter_id(filter):
     if filter == 'date':
@@ -69,9 +83,11 @@ def execute_menu_choice(choice):
 
     if choice == 'E':
         exit()
+
     if choice == "1":
         dict = flight_dict
         view_filter = flight_view_menu() # all, by pilot, destination or departure date
+
         if view_filter == "1": # all
             query = dict['query_names'][0]
             display_records(dict, query)
@@ -84,7 +100,7 @@ def execute_menu_choice(choice):
             filter_id = get_filter_id('pilot')
             # display flights by selected pilot
             dict = flight_dict
-            query = load_query('queries.sql', 'query_flights_by_pilot')
+            query = load_query_from_file('queries.sql', 'query_flights_by_pilot')
             print(query)
             print("filter ID = " + filter_id)
             display_records(dict, query, filter_id)
@@ -95,13 +111,13 @@ def execute_menu_choice(choice):
             display_records(dict, query)
             filter_id = get_filter_id('airport')
             dict = flight_dict
-            query = load_query('queries.sql', 'query_flights_by_dep_airport')
+            query = load_query_from_file('queries.sql', 'query_flights_by_dep_airport')
             display_records(dict, query, filter_id)
             return
         if view_filter == "4": # by departure date
             dict = flight_dict
             filter_id = get_filter_id('date')
-            query = load_query('queries.sql', 'query_flights_by_date')
+            query = load_query_from_file('queries.sql', 'query_flights_by_date')
             display_records(dict, query, filter_id)
             return
         

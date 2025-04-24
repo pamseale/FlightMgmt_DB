@@ -65,3 +65,9 @@ SELECT
 FROM staff as s
 LEFT JOIN flight as f ON f.pilot_ID=s.ID
 WHERE s.role = 'pilot';
+
+-- get_last_record
+SELECT ID,
+FROM ?
+ORDER BY ID DESC
+LIMIT 1;

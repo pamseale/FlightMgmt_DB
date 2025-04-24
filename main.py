@@ -1,10 +1,11 @@
-from db_import import import_db
+from file_handler import execute_sql_file
 from menu_functions import welcome, start_menu, execute_menu_choice
-import sqlite3
+
 db_filename = 'flight_management_database.db'
+db_setup_filename = 'db_setup.sql'
 
 def main():
-   import_db()
+   execute_sql_file(db_setup_filename, db_filename)
    welcome()
    run = True
    while(run):
@@ -15,4 +16,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
