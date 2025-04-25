@@ -1,11 +1,10 @@
-valid_user = "user1"
 valid_password = "1234!"
 
 def login():
         print("Please log in to access the Flight Manager:\n")
-        supplied_username = input("Username: ")
+        print("Username: user1")
         supplied_password = input("Password: ")
-        if supplied_username == valid_user and supplied_password == valid_password:
+        if supplied_password == valid_password:
             print("login details accepted.")
             return True
         else:

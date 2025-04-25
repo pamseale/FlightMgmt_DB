@@ -17,20 +17,24 @@ def calc_padding(rows, column_names):
         max(len(str(item)) if item is not None else 0 for item in list(col) + [header])
         for col, header in zip(columns, column_names)
     ]
-    """
-
-    columns = list(zip(*rows)) if rows else [[] for _ in column_names]
-    col_widths = [
-        max(len(str(item)) if item is not None else 0 for item in list(col) + [header])
- #   col_widths = [
-  #      max(len(str(item)) if item is not None else 0 for item in col + [header])
-        for col, header in zip(columns, column_names)]"""
     return widths
 
-# add padding to column headersß
+# add padding to column headers
 def add_padding(col_widths):
     format_str = " | ".join(f"{{:<{width}}}" for width in col_widths)
     return format_str
 
+# get the maximum column width from a header
 def get_column_width(col, header):
     return max(len(str(item)) if item is not None else 0 for item in list(col) + [header])
+
+def format_and_print(dict, rows):
+    numbered_rows = add_numbering(rows)
+    col_widths = calc_padding(numbered_rows, dict['display_headers'])
+    headers = add_padding(col_widths)
+    print(headers.format(*dict['display_headers']))
+    print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
+    # allow for NULL value entries
+    for row in numbered_rows:
+        safe_row = [str(item) if item is not None else "" for item in row]
+        print(headers.format(*safe_row))

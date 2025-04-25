@@ -1,8 +1,7 @@
 import sqlite3
-from file_handler import load_query_from_file
 from input_validation import request_and_validate
-from formatting import *
-from get_new_values import *
+from formatting import format_and_print
+from get_new_values import get_new_flight_values, get_new_staff_values, get_new_airport_values
 
 db_filename = 'flight_management_database.db'
 queries_filename = 'queries.sql'
@@ -14,70 +13,15 @@ def execute_query(query):
     sql = load_query_from_file(queries_filename, query)
 """
 
-def execute_sub_menu_choice(choice, dict):  # e.g. view flight
-    conn = sqlite3.connect(db_filename)
+def display_records(conn, dict, sql, args=None):
     cursor = conn.cursor()
-
-    if choice == "1": # view
-        filter = flight_view_menu() # all, by pilot, destination or departure date
-        if filter == "1": # all
-            query = load_query_from_file(queries_filename, 'view_all_flights')
-            cursor.execute(query)
-       #     display_table(dict, 'view_flights')
-            return
-        if choice == "2": # by pilot
-            query = 'view_flights_by_pilot'
-            load_query_from_file(queries_filename, query)
-       #     display_table(dict, 'view_flights')
-            return
-        if choice == "3":
-            print("by destination")
-            return
-    if choice == "2": # add
-        add_record(dict)
-        return
-    if choice == "3": # amend
-        update_record(dict)
-        return
-    if choice == "4": # remove
-        remove_record(dict)
-        return
-    if choice == 'E':
-        exit()
-
-def display_records(dict, sql, args=None):
-    print(sql)
-    # create connection object
-    conn = sqlite3.connect(db_filename)
-    cursor = conn.cursor()
- #   query = "SELECT * FROM view_all_flights"
- #   print(query)
- #   cursor.execute(query)
-
-    # get SQL query from file and execute
-  #  query = dict['query_names'][0]
-  #  print(query)
-  #  sql = load_query_from_file('queries.sql', query)
-   # sql = "SELECT * FROM view_all_flights"
-
-    #cursor.execute("SELECT * FROM view_all_flights", )
-    print("\n")
     if args:
         cursor.execute(sql, (args,))
     else:
         cursor.execute(sql)
     rows = cursor.fetchall()
-    numbered_rows = add_numbering(rows)
-    col_widths = calc_padding(numbered_rows, dict['display_headers'])
-    headers = add_padding(col_widths)
-    print(headers.format(*dict['display_headers']))
-    print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
-    # allow for NULL value entries
-    for row in numbered_rows:
-        safe_row = [str(item) if item is not None else "" for item in row]
-        print(headers.format(*safe_row))
     conn.commit
-    conn.close
+    format_and_print(dict, rows)
 
 
 def row_count(conn, table_name):
@@ -88,42 +32,50 @@ def row_count(conn, table_name):
     return result
 
 
-def get_col_to_update(dict):
-    print_amend_options(dict)
-    num_options = len(dict['amend_options'])
-    valid_input = (request_and_validate(1, num_options))
-    index = int(valid_input) - 1
-    column_name = dict['actual_headers'][index]
-    return column_name
-    
-
 def new_value():
     new_value = input("What would you like the new value to be?")
     return new_value
 
 
-def update_record(dict):
-    conn = sqlite3.connect(db_filename)
-    cursor = conn.cursor()
-    query = dict['query_names'][0]
-    display_records(dict, query)
+def get_record_index(conn, dict):
+    # display all records
+    sql = dict['query_names'][0]
+    display_records(conn, dict, sql)
+    # count rows
     num_rows = row_count(conn, dict['table_name'])
+    # get which record to update
     print("\nWhich record would you like to change?\n")
     record_no = request_and_validate(1, num_rows)
+    # get record index
     index = int(record_no) - 1
+    return index
+
+def get_col_to_update(dict):
+    print_amend_options(dict)
+    num_options = len(dict['amend_options'])
+    valid_input = (request_and_validate(1, num_options))
+    index = int(valid_input) - 1
+    column_name = dict['amend_actual'][index]
+    return column_name
+
+def print_amend_options(dict):
+    print("\nYou have permission to update the following records:\n")
+    for opt in dict['amend_options']:
+        print (opt)
+    print("\n")
+
+def update_record(conn, dict, record_index, column_to_update, updated_value):
+    cursor = conn.cursor()
     cursor.execute(f"SELECT * from {dict['table_name']} ")
     rows = cursor.fetchall()
-    if 0 <= index < len(rows):
-        record_id = rows[index][0]
-        col_to_update = get_col_to_update(dict)
-        updated_value = new_value()
-        sql = f"UPDATE {dict['table_name']} SET {col_to_update} = ? WHERE ID = ?"
-        cursor.execute(sql, (updated_value, record_id))
-        conn.commit()
-        print(f"Updated record (ID: {record_id})")
-    else:
-        print(f"Row {record_no} does not exist.")
-    conn.close
+ #   if 0 <= record_index < len(rows):
+    record_id = rows[record_index][0]
+    sql = f"UPDATE {dict['table_name']} SET {column_to_update} = ? WHERE ID = ?"
+    cursor.execute(sql, (updated_value, record_id))
+    conn.commit()
+ #       print(f"Updated record.")      
+ #   else:
+  #      print(f" Record does not exist.")
 
 
 def get_new_record_values(table, last_record_id):
@@ -134,32 +86,58 @@ def get_new_record_values(table, last_record_id):
     if table == 'airport':
         return get_new_airport_values(last_record_id)
 
-
-def add_record(dict):
-    conn = sqlite3.connect(db_filename)
+def get_last_record_id(conn, dict):
     cursor = conn.cursor()
-    sql = load_query_from_file('queries.sql', 'get_last_record')
     sql = f"SELECT ID FROM {dict['table_name']} ORDER BY ID DESC LIMIT 1;"
     cursor.execute(sql)
     last_id = cursor.fetchone()
+    conn.commit()        
+    return  last_id
+
+def get_col_names(conn, dict):
+    cursor = conn.cursor()
     cursor.execute(f"SELECT * from {dict['table_name']} LIMIT 1")
     column_names = [desc[0] for desc in cursor.description]
-    columns_str = ', '.join(column_names)  # joins into one string
-    placeholders = ', '.join(['?'] * len(column_names))  # creates '?, ?, ?, ?'
-    args = get_new_record_values(dict['table_name'], last_id)
-    if len(args) != len(column_names):
-        raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
+    conn.commit()        
+    conn.close
+    return column_names
+
+def insert_new_data(conn, dict, columns_str, placeholders, args):
+    cursor = conn.cursor()
     sql = f"INSERT INTO {dict['table_name']} ({columns_str}) VALUES ({placeholders})"
     cursor.execute(sql, args)
     conn.commit()        
     print(f"Record added ({args[1]})")
     conn.close
 
-def remove_record(dict):
-    conn = sqlite3.connect(db_filename)
+def add_record(conn, dict):
+    
+    # get last record id for incrementing
+    last_id = get_last_record_id(conn, dict)
+
+    # get column names for adding data into
+    column_names = get_col_names(conn, dict)
+    columns_str = ', '.join(column_names)  # joins into one string
+
+    # get args for new data
+    placeholders = ', '.join(['?'] * len(column_names))  # creates '?, ?, ?, ?'
+    args = get_new_record_values(dict['table_name'], last_id)
+    if len(args) != len(column_names):
+        raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
+    
+    # insert into table and print new table
+    print(column_names)
+    print(args)
+    insert_new_data(conn, dict, columns_str, placeholders, args)
+    print(f"\nUpdated {dict['table_name']} records are as follows: \n")
+    
+    display_records(conn, dict, dict['query_names'][0])
+
+
+def remove_record(conn, dict):
     cursor = conn.cursor()
     query = dict['query_names'][0]
-    display_records(dict, query)
+    display_records(conn, dict, query)
     num_rows = row_count(conn, dict['table_name'])
     print("\nWhich record would you like to delete?\n")
     record_no = request_and_validate(1, num_rows)
@@ -173,4 +151,4 @@ def remove_record(dict):
         print(f"Deleted record (ID: {record_id})")
     else:
         print(f"Row {record_no} does not exist.")
-    conn.close
+

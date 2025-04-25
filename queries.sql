@@ -56,7 +56,7 @@ SELECT
 FROM staff as s
 WHERE s.role = 'pilot';
 
--- view_pilots_with_flights
+-- view_pilots_with_flights_assigned
 SELECT 
     s.ID,
     s.surname,

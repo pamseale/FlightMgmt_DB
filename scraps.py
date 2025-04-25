@@ -1,4 +1,35 @@
+
 """
+def execute_sub_menu_choice(choice, dict):  # 1 to 6 e.g. view flight
+ #   conn = sqlite3.connect(db_filename)
+ #   cursor = conn.cursor()
+
+    if choice == "1": # view
+        filter = flight_view_menu() # all, by pilot, destination or departure date
+        if filter == "1": # all
+            sql = load_query_from_file(queries_filename, dict['query_names'][0])
+            display_records(dict, sql)
+            return
+        if filter == "2": # by pilot
+            query = 'view_flights_by_pilot'
+            load_query_from_file(queries_filename, query)
+            print("here")
+       #     display_table(dict, 'view_flights')
+            return
+        if filter == "3":
+            print("by destination")
+            return
+    if choice == "2": # add
+        add_record(dict)
+        return
+    if choice == "3": # amend
+        update_record(dict)
+        return
+    if choice == "4": # remove
+        remove_record(dict)
+        return
+    if choice == 'E':
+        exit()
 
 
 f.pilot_ID = ?

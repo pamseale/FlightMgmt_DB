@@ -1,7 +1,7 @@
 from dictionaries import flight_dict, staff_dict, airport_dict
-from db_functions import display_records, update_record, add_record, remove_record
+from db_functions import display_records, add_record, update_record, remove_record, get_record_index, get_col_to_update, new_value
 from file_handler import load_query_from_file
-from get_new_values import *
+#from get_new_values import get_new_flight_values, get_new_staff_values, get_new_airport_values
 from input_validation import request_and_validate
 
 
@@ -50,7 +50,7 @@ def print_VAAR_menu(table_name):
 
 
 def flight_view_menu():
-    print_flight_view_menu() # flights by all, pilot, dest, date
+    print_flight_view_menu() # flights by all, pilot, dest, or date
     num_options = 4
     valid_input = request_and_validate(1, num_options)
     return valid_input
@@ -64,13 +64,6 @@ def print_flight_view_menu():
     print(f"4. View flights by departure date")
 
 
-def print_amend_options(dict):
-    print("\nYou have permission to update the following records:\n")
-    for opt in dict['amend_options']:
-        print (opt)
-    print("\n")
-
-
 def get_filter_id(filter):
     if filter == 'date':
         filter_id = input("\nEnter the " + filter + " you would like to filter by in the format YYYY-MM-DD : ")
@@ -78,10 +71,14 @@ def get_filter_id(filter):
         filter_id = input("\nEnter the ID of the " + filter + " you would like to filter by:  ")
     return filter_id
 
+def get_record_id(record):
+    record_id = input("\nEnter the ID of your selected " + record + ":  ")
+    return record_id
 
-def execute_menu_choice(choice):
+def execute_menu_choice(choice, conn):
 
     if choice == 'E':
+        conn.close()
         exit()
 
     if choice == "1":
@@ -90,50 +87,78 @@ def execute_menu_choice(choice):
 
         if view_filter == "1": # all
             query = dict['query_names'][0]
-            display_records(dict, query)
+            display_records(conn, dict, query)
             return
+        
         if view_filter == "2": # by pilot
             # display all pilots and get user to select
             dict = staff_dict
             query = dict['query_names'][1]
-            display_records(dict, query)
+            display_records(conn, dict, query)
             filter_id = get_filter_id('pilot')
             # display flights by selected pilot
             dict = flight_dict
-            query = load_query_from_file('queries.sql', 'query_flights_by_pilot')
-            print(query)
-            print("filter ID = " + filter_id)
-            display_records(dict, query, filter_id)
+            query = load_query_from_file(conn, 'queries.sql', 'query_flights_by_pilot')
+            print("filter = " + filter_id)
+            display_records(conn, dict, query, filter_id)
             return
+        
         if view_filter == "3": # by destination
             dict = airport_dict
             query = dict['query_names'][0]
-            display_records(dict, query)
+            display_records(conn, dict, query)
             filter_id = get_filter_id('airport')
             dict = flight_dict
             query = load_query_from_file('queries.sql', 'query_flights_by_dep_airport')
-            display_records(dict, query, filter_id)
+            print("filter = " + filter_id)
+            display_records(conn, dict, query, filter_id)
             return
+        
         if view_filter == "4": # by departure date
             dict = flight_dict
             filter_id = get_filter_id('date')
             query = load_query_from_file('queries.sql', 'query_flights_by_date')
-            display_records(dict, query, filter_id)
+            print("filter = " + filter_id)
+            display_records(conn, dict, query, filter_id)
             return
         
     if choice == "3":
         dict = airport_dict
         print("Which pilot's schedule would you like to view?")
-        query = 'view_pilots'
-        display_records(staff_dict, query)
-        query = 'view_flights_by_pilot'
+        query = load_query_from_file('queries.sql', 'view_pilots')
+        display_records(conn, staff_dict, query)
+        query = load_query_from_file('queries.sql', 'query_flights_by_pilot')
         print("\n")
         filter_id = get_filter_id('pilot')
-        display_records(dict, query, filter_id)
+        display_records(conn, dict, query, filter_id)
         return
 
     if choice == "4":
         print("4. Assign pilot to flight")
+        cursor = conn.cursor()
+
+        dict = staff_dict
+        print("Which pilot would you like to assign?")
+        sql = load_query_from_file('queries.sql', 'view_pilots')
+        display_records(conn, staff_dict, sql)
+
+        pilot_id = get_record_id('pilot')
+        print(pilot_id)
+        updated_value = pilot_id
+        print("Which flight would you like to  would you like to assign this pilot to?")
+        display_records(conn, flight_dict, flight_dict['query_names'][0])
+        flight_id = get_record_id('flight')
+        print(flight_id)
+        col_to_update = 'pilot_ID'
+        sql = f"UPDATE {flight_dict['table_name']} SET pilot_ID = ? WHERE ID = ?"
+        cursor.execute(sql, (pilot_id, flight_id))
+
+        sql = f"UPDATE {'flight'} SET {col_to_update} = ? WHERE ID = ?"
+        cursor.execute(sql, (updated_value, flight_id))
+        conn.commit()
+
+
+
 
     if (choice == '2' or '5' or '6'):
         if choice == "2":
@@ -142,30 +167,35 @@ def execute_menu_choice(choice):
             dict = airport_dict
         if choice == "6":
             dict = staff_dict
-        execute_VAAR_menu_choice(dict)
+        execute_VAAR_menu_choice(conn, dict)
 
 
-def execute_VAAR_menu_choice(dict):
+def execute_VAAR_menu_choice(conn, dict):
                 
     choice_vaar = VAAR_menu(dict['table_name']) # view add amend remove 
 
     if choice_vaar == "1": # view
         query = dict['query_names'][0]
-        display_records(dict, query)
+        display_records(conn, dict, query)
         return
 
     if choice_vaar == "2": # add
-        add_record(dict)
+        add_record(conn, dict)
         return
     
     if choice_vaar == "3": # amend
-        update_record(dict)
+
+        index = get_record_index(conn, dict)
+        col_to_update = get_col_to_update(dict)
+        updated_value = new_value()
+        update_record(conn, dict, index, col_to_update, updated_value)
         return
     
     if choice_vaar == "4": # remove
-        remove_record(dict)
+        remove_record(conn, dict)
         return
     
     if choice_vaar == 'E':
+        conn.close()
         exit()
 
