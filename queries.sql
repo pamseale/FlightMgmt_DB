@@ -10,7 +10,8 @@ SELECT
     TIME(f.date_arr_scheduled) AS arr_time
 FROM flight as f 
 LEFT JOIN pilot as p ON p.ID=f.pilot_ID
-WHERE f.pilot_ID = ?;
+WHERE f.pilot_ID = ?
+ORDER BY DATE(f.date_dep_scheduled);
 
 
 -- query_flights_by_dep_airport
@@ -28,7 +29,8 @@ SELECT
 FROM flight as f 
 LEFT JOIN pilot as p ON p.ID=f.pilot_ID 
 LEFT JOIN pilot as fo ON fo.ID=f.first_officer_ID 
-WHERE airport_dep_ID = ?;
+WHERE airport_dep_ID = ?
+ORDER BY f.airport_dep_ID;
 
 -- query_flights_by_date
 SELECT 
@@ -45,19 +47,21 @@ SELECT
 FROM flight as f 
 LEFT JOIN pilot as p ON p.ID=f.pilot_ID 
 LEFT JOIN pilot as fo ON fo.ID=f.first_officer_ID 
-WHERE DATE(date_dep_scheduled) = ?;
-
+WHERE DATE(date_dep_scheduled) = ?
+ORDER BY f.airport_dep_ID;
 
 -- view_pilots
-SELECT * FROM pilot;
+SELECT * FROM pilot ORDER BY ID;
 
 -- view_pilots_with_flights_assigned
 SELECT 
-    p.ID,
-    p.surname,
-    p.forename
+    p.ID AS pilot_ID,
+    p.surname AS Surname,
+    p.forename AS Forename
 FROM pilot as p
 INNER JOIN flight as f ON f.pilot_ID=p.ID
+GROUP BY p.ID
+ORDER BY p.surname;
 
 -- get_last_record
 SELECT ID,
