@@ -6,8 +6,8 @@ SELECT
     DATE(f.date_dep_scheduled) AS dep_date,
     TIME(f.date_dep_scheduled) AS dep_time,
     f.airport_arr_ID,
-    DATE(f.date_dep_scheduled) AS arr_date,
-    TIME(f.date_dep_scheduled) AS arr_time
+    DATE(f.date_arr_scheduled) AS arr_date,
+    TIME(f.date_arr_scheduled) AS arr_time
 FROM flight as f 
 LEFT JOIN staff as s ON s.ID=f.pilot_ID
 WHERE f.pilot_ID = ?;
@@ -63,7 +63,7 @@ SELECT
     s.forename,
     s.role
 FROM staff as s
-LEFT JOIN flight as f ON f.pilot_ID=s.ID
+INNER JOIN flight as f ON f.pilot_ID=s.ID
 WHERE s.role = 'pilot';
 
 -- get_last_record

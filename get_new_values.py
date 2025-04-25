@@ -1,12 +1,8 @@
 from dictionaries import *
-#from db_functions import display_records
 
 def display_and_choose(dict, query):
-    #conn = sqlite3.connect(db_filename)
-    #cursor = conn.cursor()
     print(f"Which {dict['table_name']} would you like to use?")
     print(query)
-    #display_records(dict, query)
     print("\n")
     record_id = input(f"Enter the required ID: ")
     return record_id
@@ -24,16 +20,13 @@ def increment_id(previous_id):
 def get_new_flight_values(last_id):
     id = increment_id(last_id)
     IATA_flight_no = input("Enter the IATA flight number: ")
-    #plane = display_and_choose(plane_dict, plane_dict['query_names'][0])
     plane = input("Enter the plane ID:  ")
-   # dep_airport = display_and_choose(airport_dict, airport_dict['query_names'][0])
     dep_airport = input("Enter the departure airport code (max 3 characters):  ")
     arr_airport = input("Enter the arrival airport code (max 3 characters):  ")
     pilot = input("Enter the pilot's staff ID:  ")
     first_officer = input("Enter the first officer's staff ID, if applicable:  ")
     date_dep = input("Enter the scheduled departure date and time in the following format YYYY-MM-DD HH:MM:SS:  ")
     date_arr = input("Enter the scheduled arrival date and time in the following format YYYY-MM-DD HH:MM:SS:  ")
-
     return id, IATA_flight_no, plane, dep_airport, arr_airport, pilot, first_officer, date_dep, date_arr, 
 
 

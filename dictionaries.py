@@ -4,7 +4,7 @@ flight_dict = {
     "actual_headers":["plane_ID", "airport_dep_ID", "date_dep_scheduled", "airport_arr_ID", "date_arr_scheduled", "pilot_ID", "first_officer_ID", "relief_captain_ID"],
     "amend_options":["1. Departure time", "2. Arrival time"],
     "amend_actual":["date_dep_scheduled", "date_dep_scheduled"],
-    "query_names": ["SELECT * FROM view_all_flights", "SELECT * FROM view_flights_by_pilot", "SELECT * FROM view_flights_by_pilot WHERE f.pilot_ID = ?", "SELECT * FROM view_flights_by_dep_aiport", "SELECT * FROM view_flights_by_date", "view_flights_by_pilot", "SELECT * FROM 'flight' WHERE ID = ?"]
+    "query_names": ["SELECT * FROM view_all_flights"]
 }
 
 staff_dict = {
@@ -13,7 +13,7 @@ staff_dict = {
     "actual_headers":["ID", "surname", "forname", "role"],
     "amend_options": [ "1. Surname", "2. Forename", "3. Role" ],
     "amend_actual":["surname", "forename", "role"],
-    "query_names": ["SELECT * FROM view_all_staff", "SELECT * FROM view_pilots", "SELECT * FROM view_pilots_with_flights_assigned"]
+    "query_names": ["SELECT * FROM view_all_staff"]
 }
 
 airport_dict = {

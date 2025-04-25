@@ -1,5 +1,10 @@
 
 """
+
+# "SELECT * FROM view_flights_by_pilot", "SELECT * FROM view_flights_by_pilot WHERE f.pilot_ID = ?", "SELECT * FROM view_flights_by_dep_aiport", "SELECT * FROM view_flights_by_date", "view_flights_by_pilot", "SELECT * FROM 'flight' WHERE ID = ?"
+
+
+
 def execute_sub_menu_choice(choice, dict):  # 1 to 6 e.g. view flight
  #   conn = sqlite3.connect(db_filename)
  #   cursor = conn.cursor()

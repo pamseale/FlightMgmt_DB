@@ -7,7 +7,7 @@ db_filename = 'flight_management_database.db'
 db_setup_filename = 'db_setup.sql'
 
 def main():
-   """
+
    print("--------------------------------------------------")
    print("----------------------[1234!]---------------------")
    print("--------------------------------------------------")
@@ -15,7 +15,7 @@ def main():
    verified_user = False
    while(verified_user == False):
       verified_user = login()
-"""
+
    execute_sql_file(db_setup_filename, db_filename)
    welcome()
    conn = sqlite3.connect(db_filename)

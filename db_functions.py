@@ -6,13 +6,6 @@ from get_new_values import get_new_flight_values, get_new_staff_values, get_new_
 db_filename = 'flight_management_database.db'
 queries_filename = 'queries.sql'
 
-"""
-def execute_query(query):
-    conn = sqlite3.connect(db_filename)
-    cursor = conn.cursor()
-    sql = load_query_from_file(queries_filename, query)
-"""
-
 def display_records(conn, dict, sql, args=None):
     cursor = conn.cursor()
     if args:
@@ -43,9 +36,11 @@ def get_record_index(conn, dict):
     display_records(conn, dict, sql)
     # count rows
     num_rows = row_count(conn, dict['table_name'])
+
     # get which record to update
     print("\nWhich record would you like to change?\n")
     record_no = request_and_validate(1, num_rows)
+    
     # get record index
     index = int(record_no) - 1
     return index
@@ -68,14 +63,10 @@ def update_record(conn, dict, record_index, column_to_update, updated_value):
     cursor = conn.cursor()
     cursor.execute(f"SELECT * from {dict['table_name']} ")
     rows = cursor.fetchall()
- #   if 0 <= record_index < len(rows):
     record_id = rows[record_index][0]
     sql = f"UPDATE {dict['table_name']} SET {column_to_update} = ? WHERE ID = ?"
     cursor.execute(sql, (updated_value, record_id))
     conn.commit()
- #       print(f"Updated record.")      
- #   else:
-  #      print(f" Record does not exist.")
 
 
 def get_new_record_values(table, last_record_id):
@@ -125,22 +116,28 @@ def add_record(conn, dict):
     if len(args) != len(column_names):
         raise ValueError(f"Mismatch: table '{dict['table_name']}' expects {len(column_names)} values, but got ({placeholders})")
     
-    # insert into table and print new table
+    # insert into table
     print(column_names)
     print(args)
     insert_new_data(conn, dict, columns_str, placeholders, args)
+
+    # print updated table
     print(f"\nUpdated {dict['table_name']} records are as follows: \n")
-    
-    display_records(conn, dict, dict['query_names'][0])
+    query = dict[dict['query_names'][0]]
+    display_records(conn, dict, query)
 
 
 def remove_record(conn, dict):
     cursor = conn.cursor()
+    # display all records
     query = dict['query_names'][0]
     display_records(conn, dict, query)
+
+    # count rows in table, 
     num_rows = row_count(conn, dict['table_name'])
     print("\nWhich record would you like to delete?\n")
     record_no = request_and_validate(1, num_rows)
+
     cursor.execute(f"SELECT * from {dict['table_name']} ")
     rows = cursor.fetchall()
     index = int(record_no) - 1
