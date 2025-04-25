@@ -1,4 +1,4 @@
-from dictionaries import flight_dict, staff_dict, airport_dict
+from dictionaries import flight_dict, pilot_dict, airport_dict
 from db_functions import display_records, add_record, update_record, remove_record, get_record_index, get_col_to_update, new_value
 from file_handler import load_query_from_file
 from input_validation import request_and_validate
@@ -15,7 +15,7 @@ def welcome():
 
 def start_menu():
     print_start_menu()
-    num_options = 6
+    num_options = 8
     valid_input = request_and_validate(1, num_options)
     return valid_input
 
@@ -27,7 +27,11 @@ def print_start_menu():
     print("3. View pilot schedules")
     print("4. Assign pilot to flight")
     print("5. View or change airport information")
-    print("6. View or change staff information")
+    print("6. View or change pilot information")
+    print("7. View flights to destinations")
+    print("8. View flights to destinations with more than one flight")
+
+
 
 
 def VAAR_menu(option):
@@ -91,7 +95,7 @@ def execute_menu_choice(choice, conn):
         
         if view_filter == "2": # by pilot
             # display all pilots and get user to select
-            dict = staff_dict
+            dict = pilot_dict
             query = "SELECT * FROM view_pilots"
             display_records(conn, dict, query)
             filter_id = get_filter_id('pilot')
@@ -127,7 +131,7 @@ def execute_menu_choice(choice, conn):
         print("Which pilot's schedule would you like to view?")
         print("\n")
         query = load_query_from_file('queries.sql', 'view_pilots_with_flights_assigned')
-        display_records(conn, staff_dict, query)
+        display_records(conn, pilot_dict, query)
         filter_id = get_filter_id('pilot')
         query = load_query_from_file('queries.sql', 'query_flights_by_pilot')
         print("\n")
@@ -137,10 +141,10 @@ def execute_menu_choice(choice, conn):
     if choice == "4":
         print("4. Assign pilot to flight")
         cursor = conn.cursor()
-        dict = staff_dict
+        dict = pilot_dict
         print("Which pilot would you like to assign?")
         sql = load_query_from_file('queries.sql', 'view_pilots')
-        display_records(conn, staff_dict, sql)
+        display_records(conn, pilot_dict, sql)
         pilot_id = get_record_id('pilot')
         print(pilot_id)
         updated_value = pilot_id
@@ -157,14 +161,30 @@ def execute_menu_choice(choice, conn):
         conn.commit()
 
 
-    if (choice == '2' or '5' or '6'):
+    if (choice == ('2' or '5' or '6')):
         if choice == "2":
             dict = flight_dict
         if choice == "5":
             dict = airport_dict
         if choice == "6":
-            dict = staff_dict
+            dict = pilot_dict
         execute_VAAR_menu_choice(conn, dict)
+
+    if (choice == '7'):
+        cursor = conn.cursor()
+        query = load_query_from_file('queries.sql', 'count_flights_to_destinations')
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for row in results:
+            print(f"Destination: {row[0]}, Number of flights: {row[1]}") 
+    
+    if (choice == '8'):
+        cursor = conn.cursor()
+        query = load_query_from_file('queries.sql', 'count_flights_to_destinations_greater_1')
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for row in results:
+            print(f"Destination: {row[0]}, {row[1]} flights") 
 
 
 def execute_VAAR_menu_choice(conn, dict):
@@ -181,12 +201,9 @@ def execute_VAAR_menu_choice(conn, dict):
         return
     
     if choice_vaar == "3": # amend
-
-        
         index = get_record_index(conn, dict)
         col_to_update = get_col_to_update(dict)
         updated_value = new_value()
-
         update_record(conn, dict, index, col_to_update, updated_value)
         return
     

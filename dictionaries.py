@@ -7,13 +7,13 @@ flight_dict = {
     "query_names": ["SELECT * FROM view_all_flights"]
 }
 
-staff_dict = {
-    "table_name": "staff",
-    "display_headers":["No.", "Staff ID", "Surname", "Forname", "Role"],
+pilot_dict = {
+    "table_name": "pilot",
+    "display_headers":["No.", "Pilot ID", "Surname", "Forname", "Role"],
     "actual_headers":["ID", "surname", "forname", "role"],
     "amend_options": [ "1. Surname", "2. Forename", "3. Role" ],
     "amend_actual":["surname", "forename", "role"],
-    "query_names": ["SELECT * FROM view_all_staff"]
+    "query_names": ["SELECT * FROM view_all_pilots"]
 }
 
 airport_dict = {

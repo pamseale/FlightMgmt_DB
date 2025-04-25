@@ -23,19 +23,18 @@ def get_new_flight_values(last_id):
     plane = input("Enter the plane ID:  ")
     dep_airport = input("Enter the departure airport code (max 3 characters):  ")
     arr_airport = input("Enter the arrival airport code (max 3 characters):  ")
-    pilot = input("Enter the pilot's staff ID:  ")
-    first_officer = input("Enter the first officer's staff ID, if applicable:  ")
+    pilot = input("Enter the pilot's ID:  ")
+    first_officer = input("Enter the first officer's ID, if applicable:  ")
     date_dep = input("Enter the scheduled departure date and time in the following format YYYY-MM-DD HH:MM:SS:  ")
     date_arr = input("Enter the scheduled arrival date and time in the following format YYYY-MM-DD HH:MM:SS:  ")
     return id, IATA_flight_no, plane, dep_airport, arr_airport, pilot, first_officer, date_dep, date_arr, 
 
 
-def get_new_staff_values(last_id):
+def get_new_pilot_values(last_id):
     id = increment_id(last_id)
-    surname = input("Enter the staff member's surname:  ")
-    forename = input("Enter the staff member's forename:  ")
-    role = input("Enter the staff member's role:  ")
-    return id, surname, forename, role
+    surname = input("Enter the pilot's surname:  ")
+    forename = input("Enter the pilot's forename:  ")
+    return id, surname, forename
 
 
 def get_new_airport_values(last_id):

@@ -1,7 +1,7 @@
 import sqlite3
 from input_validation import request_and_validate
 from formatting import format_and_print
-from get_new_values import get_new_flight_values, get_new_staff_values, get_new_airport_values
+from get_new_values import get_new_flight_values, get_new_pilot_values, get_new_airport_values
 
 db_filename = 'flight_management_database.db'
 queries_filename = 'queries.sql'
@@ -72,8 +72,8 @@ def update_record(conn, dict, record_index, column_to_update, updated_value):
 def get_new_record_values(table, last_record_id):
     if table == 'flight':
         return get_new_flight_values(last_record_id)
-    if table == 'staff':
-        return get_new_staff_values(last_record_id)
+    if table == 'pilot':
+        return get_new_pilot_values(last_record_id)
     if table == 'airport':
         return get_new_airport_values(last_record_id)
 

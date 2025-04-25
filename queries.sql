@@ -9,7 +9,7 @@ SELECT
     DATE(f.date_arr_scheduled) AS arr_date,
     TIME(f.date_arr_scheduled) AS arr_time
 FROM flight as f 
-LEFT JOIN staff as s ON s.ID=f.pilot_ID
+LEFT JOIN pilot as p ON p.ID=f.pilot_ID
 WHERE f.pilot_ID = ?;
 
 
@@ -26,8 +26,8 @@ SELECT
     p.surname AS pilot,
     fo.surname AS first_officer
 FROM flight as f 
-LEFT JOIN staff as p ON p.ID=f.pilot_ID 
-LEFT JOIN staff as fo ON fo.ID=f.first_officer_ID 
+LEFT JOIN pilot as p ON p.ID=f.pilot_ID 
+LEFT JOIN pilot as fo ON fo.ID=f.first_officer_ID 
 WHERE airport_dep_ID = ?;
 
 -- query_flights_by_date
@@ -43,31 +43,39 @@ SELECT
     p.surname AS pilot,
     fo.surname AS first_officer
 FROM flight as f 
-LEFT JOIN staff as p ON p.ID=f.pilot_ID 
-LEFT JOIN staff as fo ON fo.ID=f.first_officer_ID 
+LEFT JOIN pilot as p ON p.ID=f.pilot_ID 
+LEFT JOIN pilot as fo ON fo.ID=f.first_officer_ID 
 WHERE DATE(date_dep_scheduled) = ?;
 
 
 -- view_pilots
-SELECT 
-    s.ID,
-    s.surname,
-    s.forename
-FROM staff as s
-WHERE s.role = 'pilot';
+SELECT * FROM pilot;
 
 -- view_pilots_with_flights_assigned
 SELECT 
-    s.ID,
-    s.surname,
-    s.forename,
-    s.role
-FROM staff as s
-INNER JOIN flight as f ON f.pilot_ID=s.ID
-WHERE s.role = 'pilot';
+    p.ID,
+    p.surname,
+    p.forename
+FROM pilot as p
+INNER JOIN flight as f ON f.pilot_ID=p.ID
 
 -- get_last_record
 SELECT ID,
 FROM ?
 ORDER BY ID DESC
 LIMIT 1;
+
+-- count_flights_to_destinations
+SELECT
+    f.airport_arr_ID, COUNT(*) AS flight_count
+FROM flight f
+GROUP BY f.airport_arr_ID
+ORDER BY flight_count DESC;
+
+-- count_flights_to_destinations_greater_1
+SELECT
+    f.airport_arr_ID, COUNT(*) AS flight_count
+FROM flight f
+GROUP BY f.airport_arr_ID
+HAVING flight_count >1
+ORDER BY flight_count desc;
