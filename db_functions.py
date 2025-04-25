@@ -13,9 +13,9 @@ def display_records(conn, dict, sql, args=None):
     else:
         cursor.execute(sql)
     rows = cursor.fetchall()
-    conn.commit
+    conn.commit()
     format_and_print(dict, rows)
-
+    
 
 def row_count(conn, table_name):
     cursor = conn.cursor()
@@ -26,7 +26,7 @@ def row_count(conn, table_name):
 
 
 def new_value():
-    new_value = input("What would you like the new value to be?")
+    new_value = input("\nWhat would you like the new value to be?  ")
     return new_value
 
 
@@ -95,7 +95,10 @@ def get_col_names(conn, dict):
 
 def insert_new_data(conn, dict, columns_str, placeholders, args):
     cursor = conn.cursor()
+    print(columns_str)
+    print(placeholders)
     sql = f"INSERT INTO {dict['table_name']} ({columns_str}) VALUES ({placeholders})"
+    print(sql)
     cursor.execute(sql, args)
     conn.commit()        
     print(f"Record added ({args[1]})")
@@ -123,7 +126,7 @@ def add_record(conn, dict):
 
     # print updated table
     print(f"\nUpdated {dict['table_name']} records are as follows: \n")
-    query = dict[dict['query_names'][0]]
+    query = dict['query_names'][0]
     display_records(conn, dict, query)
 
 
@@ -145,7 +148,7 @@ def remove_record(conn, dict):
         record_id = rows[index][0]
         cursor.execute(f"DELETE FROM {dict['table_name']} WHERE id = ?", (record_id,))
         conn.commit()
-        print(f"Deleted record (ID: {record_id})")
+        print(f"\nDeleted record (ID: {record_id})")
     else:
-        print(f"Row {record_no} does not exist.")
+        print(f"\nRow {record_no} does not exist.")
 

@@ -32,6 +32,7 @@ def format_and_print(dict, rows):
     numbered_rows = add_numbering(rows)
     col_widths = calc_padding(numbered_rows, dict['display_headers'])
     headers = add_padding(col_widths)
+    print("\n")
     print(headers.format(*dict['display_headers']))
     print("-" * (sum(col_widths) + 3 * (len(col_widths) - 1)))
     # allow for NULL value entries

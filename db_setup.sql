@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS flight (
 CREATE TABLE IF NOT EXISTS airport (
     ID VARCHAR(20) NOT NULL,
     IATA_code  VARCHAR(3) NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    airport_name VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     country VARCHAR(255) NOT NULL,
     continent VARCHAR(255) NOT NULL,
@@ -123,7 +123,7 @@ LEFT JOIN pilot AS fo ON fo.ID=f.first_officer_ID;
 CREATE VIEW IF NOT EXISTS view_all_airports AS
 SELECT 
     a.IATA_code,
-    a.name,
+    a.airport_name,
     a.city,
     a.country,
     a.continent,

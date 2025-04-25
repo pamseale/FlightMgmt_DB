@@ -67,15 +67,19 @@ LIMIT 1;
 
 -- count_flights_to_destinations
 SELECT
-    f.airport_arr_ID, COUNT(*) AS flight_count
-FROM flight f
+    a.airport_name,
+    COUNT(*) AS flight_count 
+FROM flight AS f
+LEFT JOIN airport AS a ON f.airport_arr_ID=a.IATA_code
 GROUP BY f.airport_arr_ID
 ORDER BY flight_count DESC;
 
 -- count_flights_to_destinations_greater_1
 SELECT
-    f.airport_arr_ID, COUNT(*) AS flight_count
-FROM flight f
+    a.airport_name,
+    COUNT(*) AS flight_count
+FROM flight AS f
+LEFT JOIN airport AS a ON f.airport_arr_ID=a.IATA_code
 GROUP BY f.airport_arr_ID
 HAVING flight_count >1
-ORDER BY flight_count desc;
+ORDER BY flight_count DESC;
